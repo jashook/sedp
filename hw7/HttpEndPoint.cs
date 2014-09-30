@@ -11,15 +11,21 @@ namespace hw7
 {
    class HttpEndPoint
    {
-      private delegate string OnGetRequest();
+      public delegate string OnRequest();
 
-      OnGetRequest m_request_function;
+      private OnRequest m_get_request_function;
+      private string m_url;
 
-      public HttpEndPoint(OnGetRequest request)
+      public HttpEndPoint(string url, OnRequest get_request, OnRequest post_request)
       {
-         m_request_function = request;
+         m_get_request_function = get_request;
+
+         m_url = url;
 
          Thread t = new Thread(new ThreadStart(Connect));
+
+         t.Start();
+         t.Join();
       }
 
       public void Connect()
@@ -51,14 +57,23 @@ namespace hw7
             failed = true;
          }
 
-         string message = port.ToString() + ":/";
+         string message = port.ToString() + ":" + m_url;
 
          Byte[] sent_message = Encoding.ASCII.GetBytes(message);
 
          // Max of 1024 waiting connections
          listening_socket.Listen(1024);
 
-         connecting_socket.Connect(endpoint);
+         try
+         {
+            connecting_socket.Connect(endpoint);
+         }
+
+         catch (Exception e)
+         {
+            Console.WriteLine("Unable to Connect to Server, please check if it is running.");
+         }
+         
          connecting_socket.Send(sent_message, sent_message.Length, 0);
          connecting_socket.Disconnect(false);
 
@@ -66,7 +81,7 @@ namespace hw7
          {
             Socket accepting_socket = listening_socket.Accept();
 
-            string html = m_request_function();
+            string html = m_get_request_function();
 
             byte[] html_message = Encoding.ASCII.GetBytes(html);
 
