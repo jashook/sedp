@@ -10,12 +10,12 @@ namespace hw7
 {
    class Program
    {
-      public static string on_get_request()
+      public static string on_get_request(Dictionary<string, string> parameters)
       {
          return "<h1>Hello World, this is a test.</h1>";
       }
 
-      public static string on_post_request()
+      public static string on_post_request(Dictionary<string, string> parameters)
       {
          return "";
       }

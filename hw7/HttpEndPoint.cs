@@ -11,7 +11,7 @@ namespace hw7
 {
    class HttpEndPoint
    {
-      public delegate string OnRequest(Dictionary<string, string>);
+      public delegate string OnRequest(Dictionary<string, string> parameters);
 
       private OnRequest m_get_request_function;
       private OnRequest m_post_request_function;
