@@ -53,9 +53,9 @@ class JSON<T>
 
    public T ToObject()
    {
-      DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(YourObjectType));
+      DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
 
-      YourObjectType yourObject = (YourObjectType)serializer.ReadObject(jsonStream);
+      T yourObject = (T)serializer.ReadObject(jsonStream);
    }
 
    private void ParseObject()

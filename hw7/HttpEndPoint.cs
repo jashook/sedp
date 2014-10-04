@@ -99,7 +99,11 @@ namespace hw7
 
             Dictionary<string, string> parameters;
 
-            int method = ParseType(pre_run_information, out parameters);
+            string raw_output = "";
+
+            int method = ParseType(pre_run_information, out parameters, ref raw_output);
+
+            parameters.Add("raw_output", raw_output);
 
             string html = method == 0 ? m_get_request_function(parameters) : m_post_request_function(parameters);
 
@@ -111,7 +115,7 @@ namespace hw7
          }
       }
 
-      private int ParseType(string transfered_information, out Dictionary<string, string> parameters)
+      private int ParseType(string transfered_information, out Dictionary<string, string> parameters, ref string raw_ouput)
       {
          parameters = new Dictionary<string, string>();
 
@@ -119,7 +123,18 @@ namespace hw7
 
          transfered_information = transfered_information.Substring(1);
 
+         char raw = transfered_information[0];
+
+         transfered_information = transfered_information.Substring(1);
+
          if (transfered_information.Length > 0) return (int)method;
+
+         if ((int)raw == 1)
+         {
+            raw_ouput = transfered_information;
+
+            return (int)method;
+         }
 
          string[] split_information = transfered_information.Split(new char[1] { '&' });
 
