@@ -20,6 +20,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
+using System.IO;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -46,18 +47,11 @@ class JSON<T>
       m_json_string = str_object;
    }
 
-   public string ToString()
+   public override string ToString()
    {
       return m_json_string;
    }
-
-   public T ToObject()
-   {
-      DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
-
-      T yourObject = (T)serializer.ReadObject(jsonStream);
-   }
-
+ 
    private void ParseObject()
    {
       JavaScriptSerializer serializer = new JavaScriptSerializer();
