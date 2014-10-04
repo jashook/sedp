@@ -52,7 +52,7 @@ namespace hw7
             } while (failed);
          }
 
-         catch (Exception e)
+         catch
          {
             listening_endpoint = new IPEndPoint(IPAddress.Loopback, ++port);
 
@@ -71,7 +71,7 @@ namespace hw7
             connecting_socket.Connect(endpoint);
          }
 
-         catch (Exception e)
+         catch
          {
             Console.WriteLine("Unable to Connect to Server, please check if it is running.");
          }
