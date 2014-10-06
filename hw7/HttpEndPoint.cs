@@ -109,6 +109,8 @@ namespace hw7
 
             byte[] html_message = Encoding.ASCII.GetBytes(html);
 
+            accepting_socket = listening_socket.Accept();
+
             accepting_socket.Send(html_message, html_message.Length, 0);
 
             accepting_socket.Disconnect(false);
@@ -119,21 +121,30 @@ namespace hw7
       {
          parameters = new Dictionary<string, string>();
 
-         char method = transfered_information[0];
+         char method_char = transfered_information[0];
+
+         int method = method_char - '0';
 
          transfered_information = transfered_information.Substring(1);
 
-         char raw = transfered_information[0];
+         char raw_char = transfered_information[0];
+
+         int raw = raw_char - '0';
 
          transfered_information = transfered_information.Substring(1);
 
-         if (transfered_information.Length > 0) return (int)method;
+         if (transfered_information.Length > 0) return method;
 
-         if ((int)raw == 1)
+         if (raw == 1)
          {
             raw_ouput = transfered_information;
 
-            return (int)method;
+            return method;
+         }
+
+         if (transfered_information == "")
+         {
+            return method;
          }
 
          string[] split_information = transfered_information.Split(new char[1] { '&' });
@@ -145,7 +156,7 @@ namespace hw7
             parameters.Add(key_values[0], key_values[1]);
          }
 
-         return (int)method;
+         return method;
       }
    }
 }

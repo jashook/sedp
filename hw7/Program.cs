@@ -10,6 +10,12 @@ namespace hw7
 {
    class Program
    {
+      // Service Files
+
+      const Tuple<string, string>[] service_files = new Tuple<string, string>[] {
+         new Tuple<string, string>("hello.js", "C:\\Users\\Shook\\Source\\Repos\\cde\\data\\hello.js")
+      };
+
       public static string on_get_request(Dictionary<string, string> parameters)
       {
          return "<h1>Hello World, this is a test.</h1>";
