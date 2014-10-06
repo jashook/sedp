@@ -1,0 +1,189 @@
+
+<html>
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <title>Eric C. Larson</title>
+
+    <link type="text/css" rel="stylesheet" href="index_style.css" media="screen" />
+    <link type="text/css" rel="stylesheet" href="popbox.css" />
+    <link href='http://fonts.googleapis.com/css?family=Archivo+Narrow:400,700|Open+Sans:400,300' rel='stylesheet' type='text/css'>
+
+    <script src="js/jquery-1.6.4.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/columnNews.js"></script>
+    <script src="js/columnTravel.js"></script>
+    <script src="js/popbox.js"></script>
+
+    <!--<script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-28482802-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>-->
+
+    <script type='text/javascript' charset='utf-8'>
+        $(document).ready(function(){
+          $('.popbox').popbox();
+        });
+    </script>
+
+    <script>      
+        //ondomready
+        $(function () {
+            loadXmlNewsData();
+            loadXmlTravelData();
+        });
+    </script>
+</head>
+<body>
+    <!-- TODO         
+        fix wording
+        Update scripts to automatically fill-in news and travel with a "more..." section 
+    -->
+    <div id="container">
+        <div id="menu_header">
+           <div id="nav">
+				<ul class="sf-menu dropdown">
+				    <li class="selected"><a href="index.html">Home</a></li>             
+				    <li><a href="publications.html">Publications</a></li>
+				    <li><a href="talks.html">Talks</a></li>
+                    <!--<li><a href="advising.html">Advising</a></li>-->
+				    <li><a href="teaching.html">Teaching</a></li>
+                    <li><a href="cv.html">CV</a></li>
+				    <!--<li><a href="calendar.html">Calendar</a></li>-->
+				    <!--<li><a href="cv.html">CV</a></li>-->
+				</ul>
+			</div>
+        </div>
+        <div id="content_container">
+            <div id="name_header">
+                Eric C. Larson
+            </div>
+        </div>
+        <div id="content_container">
+            <div id="body_left" class="column">
+                <img class="mugshot" src="EricLarson2.jpg" />
+                <span class='popbox'><a class='open' href='#'>Assistant Professor</a>
+                     <div class='collapse'>
+                        <div class='box'>
+                            <div class='up_arrow'></div><div class='up_arrow_border'></div><div class='popbox_menu'><p></p></div>
+                            Eric Larson is an Assistant Professor in the department of Computer Science and Engineering in the Bobby B. Lyle School of Engineering, Southern Methodist University. His main research interests are in machine learning, sensing, and signal & image processing for ubiquitous computing applications, in particular, for healthcare and environmental sustainability applications. His work in both areas has been commercialized and he holds a variety of patents for sustainability sensing and mobile phone-based health sensing. He is active in signal processing education for computer scientists and is an active member of IEEE. He received his Ph.D. in 2013 from the University of Washington, where he was co-advised by Shwetak N. Patel and Les Atlas. He received his B.S. and M.S. in Electrical Engineering in 2006 and 2008, respectively, at Oklahoma State University, where he was advised by Damon Chandler.
+                            <p></p>
+                            <a href='#' class='close'>Close</a>
+                        </div>
+                    </div>
+                </span>
+                <a href="http://www.smu.edu/Lyle/Departments/CSE">Computer Science and Engineering</a><br />
+                <a href="http://www.smu.edu/Lyle/">Bobby B. Lyle School of Engineering</a><br />
+                <a href="http://www.smu.edu">Southern Methodist University</a><br />
+                <br />
+                twitter: <a href="http://twitter.com/ec_larson">@ec_larson</a><br />
+                email: <a href="mailto:eclarson@lyle.smu.edu">eclarson@lyle.smu.edu</a><br />
+                <br />
+                CSE Office: <a href="http://goo.gl/maps/7D2mY">451 Caruth Hall</a><br />
+                Ph. (214) 768-7846<br />
+                Lyle School of Engineering<br />
+                Caruth Hall<br />
+                3145 Dyer Street, Suite 445<br />
+                Dallas, TX 75205<br />
+                <br />
+                SMU UbiComp Lab:<br />
+				TBD<br />                                        
+				<!-- <span class="column_header">Students</span><br/> -->
+				<!-- <a href="http://kotarohara.com/">Kotaro Hara</a> -->
+            </div>
+
+            <div id="body_right">
+                <hr noshade size=3>
+                <span class="column_header">Prospective Students</span><br/>
+                I am looking for <span class="news_header">undergraduate</span> and <span class="news_header">graduate students</span> passionate about investigating the role of technology in solving impactful problems. 
+                If this interests you, please <a href="mailto:eclarson@lyle.smu.edu">contact me</a> so that we can setup a time to chat about mutual interests and potential research projects. <!-- Also, read <a href="advising.html">this</a>. -->
+                <p></p>
+                <hr noshade size=3>
+                <span class="column_header">Travel</span><br/>
+                <div id="travel_feed">
+                </div>
+                <hr noshade size=3>
+                <span class="column_header">News</span><br/>
+                <div id="news_feed">
+                </div>
+            </div>
+            
+            <div id="body_content"> 
+                <img src="images/LogoSMULyleColor.gif" width="380"/>
+                <p></p>                                  
+                <span class="content_header">About Me</span><br/>
+                I am an Assistant Professor in <a href="http://www.smu.edu/Lyle/Departments/CSE">Computer Science and Engineering</a> in the <a href="http://www.smu.edu/Lyle/">Bobby B. Lyle School of Engineering</a>, <a href="http://www.smu.edu">Southern Methodist University</a>.
+                <p></p>
+                I received my Phd in Electrical Engineering from the University of Washington in June 2013 where I was a Intel Science and Technology fellow.
+                My PhD dissertation entitled <a href="publications.html#Thesis">Semi-Supervised Training for Infrastructure Mediated Sensing: Disaggregated Hot and Cold Water Sensing With Minimal Calibration</a> has garnered significant impact in the sustainability community and is the basis of the new product <a href="http://www.belkinbusiness.com/echo-water-0">Belkin Echo</a>. 
+                At UW, I was co-advised by <a href="http://abstract.cs.washington.edu/~shwetak/">Shwetak Patel</a> and <a href="http://www.ee.washington.edu/faculty/atlas/">Les Atlas</a>.
+                I also have an MS in Image Processing from Oklahoma State University,  where I was advised by <a href="http://vision.okstate.edu/?loc=dc">Damon Chandler</a>.
+                During my graduate studies, I was fortunate to intern at a number of great labs including              
+                <a href="http://techresearch.intel.com/newsdetail.aspx?Id=27">Intel Research</a> in Seattle and 
+                <a href="http://www.garminfit.com.au/">Garmin Fitness</a>.
+                <p></p>
+                My work has been published in numerous conferences and journals disseminated through many different cross-disciplinary venues: ICIP, UbiComp, CHI, DEV, WCCI, SPIE, and Pervasive, garnering four best paper nominations. Please see my <a href="publications.html">publication page</a> and/or 
+                <a href="http://scholar.google.com/citations?user=vThE9GIAAAAJ">Google Scholar page</a> for more details.
+                <p></p>
+                <img src="images/banner_aboutme.png" width="520"/>  
+                <p></p>         
+
+
+            </div>
+            
+            <div id="body_content_long">
+                <p></p>
+                <img src="images/banner_research.png" width="700"/>
+                <p></p>
+                <span class="content_header">Research Focus</span><br/>
+                As my career progresses, I am exploring several areas of my research agenda. Foremost in my research agenda is sensing health markers and investigating technology in sustainability applications.  I note also that I have a number of publications in novel interaction and image processing. While I am still highly interested in these areas, I do not consider them part of my core research agenda. I would certainly be open to collaborations, or if a student shows particular interest. My main research agenda stays with sustainability and health: 
+                <p></p>
+                <span class="content_subheader">Sensing Opportunistic Health Markers </span><br/>
+                 I am exploring a number of projects for out-of-clinic medical sensing, such as respiratory and cardiovascular health. These topics highlight a central theme of my research—finding an accepted medical quantity and using already ubiquitous devices to sense it outside of the clinic—quantities like blood pressure for cardiac diseases, bilirubin levels for infants, and pulse-oximetry. User studies are paramount in this work as I push more of my research in mobile health towards applications requiring FDA approval.
+                <p></p>                
+                <span class="content_subheader">Health Sensing for the Developing World</span><br />
+                While sensing from mobile phones is often associated with managing care and smart phones, it also has the potential to increase access and quality of life in the developing world. I want to  innovate mobile technologies so that they are more appropriate for use in developing regions. For example, I am investigating how to employ the voice channel of a mobile phone to diagnose illnesses. Using the voice channel makes the system agnostic to the phone type and more appropriate for use in the developing world. From an application level this seems a trivial change, but from a signal-processing viewpoint, the problem is completely changed—compression and channel characteristics become important design criteria.
+                <p></p>   
+                <span class="content_subheader">Sensing and Machine Learning for Sustainability</span><br />
+                 The goal of signal processing and sensing in sustainability is twofold: (1) support existing initiatives by making them easier, lower cost, or more effective and (2) enable new initiatives by sensing new phenomena. My dissertation focused on the sensing, learning, and evaluation of these types of technologies. 
+                <p></p>             
+                <img src="images/banner_research_bottom.png" width="700"/>
+                <p></p>
+            </div>
+            
+            <!-- <div id="body_content_long">
+                <span class="content_header">Research Approach</span><br/>
+                Although my methods 
+                <p></p>
+            </div> -->
+            <div id="body_content_long">
+                <p>Copyright (c) 2013 Eric Larson, <a href="eclarson.com">eclarson.com</a>. All rights reserved. Design by <a href="http://www.freecsstemplates.org/" rel="nofollow">FreeCSSTemplates.org</a>. Many design elements on this site are courtesy of <a href="http://www.cs.umd.edu/~jonf/index.html">Jon Froehlich</a>.</p>
+            </div>
+            
+        </div>
+        
+    </div>
+
+    <!-- Start of StatCounter Code for Default Guide -->
+    <!-- <script type="text/javascript">
+        var sc_project = 7582950;
+        var sc_invisible = 1;
+        var sc_security = "bb9b5240"; 
+    </script>
+    <script type="text/javascript"
+    src="http://www.statcounter.com/counter/counter.js"></script>
+    <noscript><div class="statcounter"><a title="hit counter"
+    href="http://statcounter.com/free-hit-counter/"
+    target="_blank"><img class="statcounter"
+    src="http://c.statcounter.com/7582950/0/bb9b5240/1/"
+    alt="hit counter"></a></div></noscript> -->
+    <!-- End of StatCounter Code for Default Guide -->
+
+</body>
+</html>

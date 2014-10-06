@@ -1,35 +1,60 @@
-﻿using System;
+﻿////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// 
+// Module: Program.cs
+//
+// 30-Oct-14: Version 1.0: Created
+//
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
+using ev9;
 
-namespace hw7
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+namespace hw7 {
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+class Program
 {
-   class Program
+   // Service Files
+   private static ServiceFile[] files = new ServiceFile[]
    {
-      // Service Files
+      new ServiceFile("/halma.htm", @"C:\Users\Shook\Source\Repos\sedp\hw7\halma.htm", ServiceFile.FilePermission.READ_ONLY_ALL)
+   };
 
-      const Tuple<string, string>[] service_files = new Tuple<string, string>[] {
-         new Tuple<string, string>("hello.js", "C:\\Users\\Shook\\Source\\Repos\\cde\\data\\hello.js")
-      };
-
-      public static string on_get_request(Dictionary<string, string> parameters)
-      {
-         return "<h1>Hello World, this is a test.</h1>";
-      }
-
-      public static string on_post_request(Dictionary<string, string> parameters)
-      {
-         return "";
-      }
-
-      static void Main(string[] args)
-      {
-         // start the server, listening on "/"
-         new HttpEndPoint("/", on_get_request, on_post_request);
-      }
+   public static string on_get_request(Dictionary<string, string> parameters)
+   {
+      return "<h1>Hello World, this is a test.</h1>";
    }
-}
+
+   public static string on_post_request(Dictionary<string, string> parameters)
+   {
+      return "";
+   }
+
+   static void Main(string[] args)
+   {
+      // start the server, listening on "/"
+      new ev9.HttpEndPoint("/", on_get_request, on_post_request, files);
+   }
+
+} // end of class(Program)
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+} // end of namespace(ev9)
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
