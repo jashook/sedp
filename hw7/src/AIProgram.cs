@@ -67,7 +67,7 @@ class AIProgram
       {
          for (int y = 6; y < 9; ++y)
          {
-            s_pieces[count] = new Piece(x, y, 0);
+            s_pieces[count++] = new Piece(x, y, 0);
          }
       }
 
