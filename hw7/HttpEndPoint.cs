@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.IO;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,13 +41,41 @@ class HttpEndPoint
 
    private ServiceFile[] m_files;
 
-   public HttpEndPoint(string url, OnRequest get_request, OnRequest post_request, ServiceFile[] files)
+   public HttpEndPoint(string url, ServiceCollection files, OnRequest get_request, OnRequest post_request)
+   {
+      m_url = url;
+      m_files = files.GetItems();
+
+      m_get_request_function = get_request;
+      m_post_request_function = post_request;
+
+      Thread t = new Thread(new ThreadStart(Connect));
+
+      t.Start();
+      t.Join();
+   }
+
+   public HttpEndPoint(ServiceCollection files, OnRequest get_request, OnRequest post_request)
+   {
+      m_get_request_function = get_request;
+      m_post_request_function = post_request;
+
+      m_url = null;
+      m_files = files.GetItems();
+
+      Thread t = new Thread(new ThreadStart(Connect));
+
+      t.Start();
+      t.Join();
+   }
+
+   public HttpEndPoint(string url, OnRequest get_request, OnRequest post_request)
    {
       m_get_request_function = get_request;
       m_post_request_function = post_request;
 
       m_url = url;
-      m_files = files;
+      m_files = new ServiceFile[0];
 
       Thread t = new Thread(new ThreadStart(Connect));
 
@@ -83,11 +112,19 @@ class HttpEndPoint
          failed = true;
       }
 
-      string message = port.ToString() + ":" + m_url;
+      string message = m_url == null ? null : port.ToString() + ":" + m_url;
 
       foreach (ServiceFile file in m_files)
       {
-         message = message + "&" + port.ToString() + ":" + file.GetName();
+         if (message == null)
+         {
+            message = port.ToString() + ":" + file.GetName();
+         }
+
+         else
+         {
+            message = message + "&" + port.ToString() + ":" + file.GetName();
+         }
       }
 
       Byte[] sent_message = Encoding.ASCII.GetBytes(message);
@@ -150,6 +187,26 @@ class HttpEndPoint
          }
 
          byte[] html_message = Encoding.ASCII.GetBytes(html);
+
+         ServiceFile s_file = null;
+
+         foreach (ServiceFile p_file in m_files)
+         {
+            if (p_file.GetName() == url)
+            {
+               s_file = p_file;
+            }
+         }
+
+         string extension = Path.GetExtension(s_file.GetFilePath());
+
+         byte[] extension_message = Encoding.ASCII.GetBytes(extension);
+
+         accepting_socket = listening_socket.Accept();
+
+         accepting_socket.Send(extension_message, extension_message.Length, 0);
+
+         accepting_socket.Disconnect(false);
 
          accepting_socket = listening_socket.Accept();
 
@@ -235,34 +292,34 @@ class HttpEndPoint
 
       string return_file;
 
-      switch (s_file.GetFilePermission())
+      switch (s_file.GetPermission())
       {
-         case ev9.ServiceFile.FilePermission.READ_ONLY_ALL:
+         case Permission.READ_ONLY_ALL:
             return_file = ReadFile(s_file);
 
             break;
-         
-         case ev9.ServiceFile.FilePermission.READ_ONLY_AUTHORIZED:
+
+         case Permission.READ_ONLY_AUTHORIZED:
             return_file = "";
 
             break;
-         case ev9.ServiceFile.FilePermission.READ_ONLY_LOCAL:
+         case Permission.READ_ONLY_LOCAL:
             return_file = "";
 
             break;
-         case ev9.ServiceFile.FilePermission.READ_WRITE_ALL:
+         case Permission.READ_WRITE_ALL:
             return_file = ReadFile(s_file);
 
             break;
-         case ev9.ServiceFile.FilePermission.READ_WRITE_AUTHORIZED:
+         case Permission.READ_WRITE_AUTHORIZED:
             return_file = "";
 
             break;
-         case ev9.ServiceFile.FilePermission.READ_WRITE_LOCAL:
+         case Permission.READ_WRITE_LOCAL:
             return_file = "";
 
             break;
-         case ev9.ServiceFile.FilePermission.HIDDEN:
+         case Permission.HIDDEN:
             return_file = "";
 
             break;

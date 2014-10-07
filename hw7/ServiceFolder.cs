@@ -1,10 +1,10 @@
 ﻿////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 // 
-// Module: ServiceFile.cs
+// Module: ServiceFolder.cs
 //
-// 06-Oct-14: Version 1.0: Created
-// 06-Oct-14: Version 1.0: Support for files and their permissions
+// 07-Oct-14: Version 1.0: Created
+// 07-Oct-14: Version 1.0: Support for folders and their permissions
 //
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -23,43 +24,28 @@ namespace ev9 {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-// Public enums and types
-public enum Permission
+class ServiceFolder : ServiceItem
 {
-   READ_ONLY_ALL = 0,                  // Read only for every user
-   READ_ONLY_AUTHORIZED,               // Read only if authorized
-   READ_ONLY_LOCAL,                    // Read only if localhost
-   READ_WRITE_ALL,                     // Rad and write for every user
-   READ_WRITE_AUTHORIZED,              // Read and write if authorized
-   READ_WRITE_LOCAL,                   // Read and write on localhost
-   WRITE_ALL,                          // Write for every user
-   WRITE_AUTHORIZED,                   // Write if authorized
-   WRITE_LOCAL,                        // Write if on localhost
-   HIDDEN                              // Hidden
-}
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-class ServiceFile : ServiceItem
-{
    // Member Variables
    private string m_name;
-   private string m_file_path;
+   private string m_folder_path;
+
+   private ServiceFile[] m_files;
+
    private Permission m_permission;
 
    // Constructors
-   public ServiceFile(string name, string filepath, Permission permission)
+   public ServiceFolder(string path, Permission permission)
    {
-      m_name = name;
-      m_file_path = filepath;
+      Ctor(path);
+
       m_permission = permission;
    }
 
-   public ServiceFile(string name, string filepath)
+   public ServiceFolder(string path)
    {
-      m_name = name;
-      m_file_path = filepath;
+      Ctor(path);
    }
 
    public string GetName()
@@ -67,9 +53,9 @@ class ServiceFile : ServiceItem
       return m_name;
    }
 
-   public string GetFilePath()
+   public string GetFolderPath()
    {
-      return m_file_path;
+      return m_folder_path;
    }
 
    public Permission GetPermission()
@@ -84,10 +70,37 @@ class ServiceFile : ServiceItem
 
    public override ServiceFile[] GetItems()
    {
-      return new ServiceFile[1] { this };
+      return m_files;
    }
 
-} // end of class(ServiceFile)
+   private void Ctor(string path)
+   {
+      m_folder_path = path;
+
+      string[] filenames = Directory.GetFiles(m_folder_path, "*.*", SearchOption.AllDirectories);
+
+      m_files = new ServiceFile[filenames.Length];
+
+      int count = 0;
+
+      foreach (string filename in filenames)
+      {
+         string file_path = Path.GetDirectoryName(filename);
+
+         int i;
+
+         for (i = file_path.Length - 1; i > 0; --i)
+         {
+            if (file_path[i] == '\\') break;
+         }
+
+         string index_path = "/" + file_path.Substring(i + 1) + "/" + Path.GetFileName(filename);
+
+         m_files[count++] = new ServiceFile(index_path, filename, m_permission);
+      }
+   }
+
+} // end of class(ServiceFolder)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
