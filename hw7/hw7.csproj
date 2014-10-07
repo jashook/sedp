@@ -43,14 +43,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HttpEndPoint.cs" />
-    <Compile Include="JSON.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="src\AI.cs" />
+    <Compile Include="src\AIProgram.cs" />
+    <Compile Include="src\Board.cs" />
+    <Compile Include="src\Cell.cs" />
+    <Compile Include="lib\HttpEndPoint.cs" />
+    <Compile Include="lib\JSON.cs" />
+    <Compile Include="src\Move.cs" />
+    <Compile Include="src\Piece.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServiceCollection.cs" />
-    <Compile Include="ServiceFile.cs" />
-    <Compile Include="ServiceFolder.cs" />
-    <Compile Include="ServiceItem.cs" />
+    <Compile Include="lib\ServiceCollection.cs" />
+    <Compile Include="lib\ServiceFile.cs" />
+    <Compile Include="lib\ServiceFolder.cs" />
+    <Compile Include="lib\ServiceItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

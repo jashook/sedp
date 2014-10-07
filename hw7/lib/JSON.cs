@@ -26,31 +26,20 @@ namespace JS {
 
 class JSON<T>
 {
-   private T m_object;
-   private string m_json_string;
-
-   JSON(T data)
-   {
-      m_object = data;
-
-      ParseObject();
-   }
-
-   JSON(string str_object)
-   {
-      m_json_string = str_object;
-   }
-
-   public override string ToString()
-   {
-      return m_json_string;
-   }
- 
-   private void ParseObject()
+   public static string ToJSONString(T obj)
    {
       JavaScriptSerializer serializer = new JavaScriptSerializer();
 
-      m_json_string =  serializer.Serialize(m_object);
+      return serializer.Serialize(obj);
+   }
+
+   public static T Parse(string json)
+   {
+      JavaScriptSerializer serializer = new JavaScriptSerializer();
+
+      T obj_ref = serializer.Deserialize<T>(json);
+
+      return obj_ref;
    }
 }
 

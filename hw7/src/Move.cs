@@ -1,21 +1,15 @@
 ﻿////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 // 
-// Module: AIProgram.cs
+// Module: Move.cs
 //
-// 30-Oct-14: Version 1.0: Created
+// 7-Oct-14: Version 1.0: Created
 //
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net;
-using System.Net.Sockets;
-using ev9;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,41 +19,46 @@ namespace hw8 {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-class AIProgram
+class Move
 {
-   private static Board = new Board();
+   // Member Variables
 
-   public static string on_get_request(Dictionary<string, string> parameters)
+   public Cell OriginalLocation { get; set; }
+   public Cell[] DestinationLocations { get; set; }
+
+   public Move()
    {
-      // Get request should not happen
+      OriginalLocation = new Cell();
+      DestinationLocations = new Cell[1] { OriginalLocation };
    }
 
-   public static string on_post_request(Dictionary<string, string> parameters)
+   public Move(Cell old_location, Cell new_location)
    {
-      string board_as_json;
+      OriginalLocation = old_location;
+      DestinationLocations = new Cell[1] { new_location };
+   }
 
-      if (parameters.TryGetValue("pieces", out board_as_json) == false)
+   public Move(Cell old_location, params Cell[] new_locations)
+   {
+      OriginalLocation = old_location;
+      DestinationLocations = new Cell[new_locations.Length];
+
+      int count = 0;
+
+      foreach (Cell cell in new_locations)
       {
-         // Incorrect parameters
-         
-         return "";
+         DestinationLocations[count] = new_locations[count];
+
+         ++count;
       }
-
-      Piece[] pieces = JSON<Piece[]>(board_as_json);
-
    }
 
-   static void Main(string[] args)
-   {
-      new ev9.HttpEndPoint("/", on_get_request, on_post_request);
-   }
-
-} // end of class(Program)
+} // end of class(Move)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-} // end of namespace(ev9)
+} // end of namespace(hw8)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////

@@ -23,12 +23,21 @@ class Board
 {
    // Member Variables
 
-   private Cell[,] Board;
-   private Cell Destination;  // Default destination is first row, last column
+   public Cell[,] Cells { get; private set; }
+   public Cell DestinationUpperLeft { get; private set; }
+   public Cell DestinationLowerRight { get; private set; }
 
-   public Board(int size = 9, Cell Destination = new Cell(0,8))
+   public Board(int size = 9, Cell upper_left_destination = null, Cell lower_right_destination = null)
    {
-      Board = new Cell[size,size];
+      Cells = new Cell[size, size];
+
+      if (upper_left_destination == null)
+      {
+         // Default destination is first row, last column
+         upper_left_destination = new Cell(0, 6);
+
+         lower_right_destination = new Cell(2, 8);
+      }
 
       // Set up the board as a collection of cells
       // Assign each cell its own number
@@ -36,14 +45,17 @@ class Board
       {
          for (int y = 0; y < size; ++y)
          {
-            Board[x][y] = new Cell(x, y);
+            Cells[x, y] = new Cell(x, y);
          }
       }
+
+      DestinationUpperLeft = upper_left_destination;
+      DestinationLowerRight = lower_right_destination;
    }
 
    public void AddPiece(Piece point)
    {
-      Board[point.X, point.Y] = point;
+      Cells[point.X, point.Y] = point;
    }
 
    public void MovePiece(Piece point, Cell destination)
@@ -51,13 +63,18 @@ class Board
       if (IsValidMove(point, destination) == false) return;      
 
       // Reset the cell (Removing the point)
-      Board[point.X, point.Y] = new Cell(point.X, point.Y);
+      Cells[point.X, point.Y] = new Cell(point.X, point.Y);
 
-      Board[destination.X, destination.Y] = point;
+      Cells[destination.X, destination.Y] = point;
 
       // Update the point
       point.X = destination.X;
       point.Y = destination.Y;
+   }
+
+   public void UpdateBoard(Move move)
+   {
+      MovePiece((Piece)move.OriginalLocation, move.DestinationLocation);
    }
 
    private bool IsValidMove(Piece point, Cell destination)
@@ -74,13 +91,13 @@ class Board
          return false;
       }
 
-      if (destination.X < 0 || destination.Y > Board.GetLength(0))
+      if (destination.X < 0 || destination.Y > Cells.GetLength(0))
       {
          // Not inside the board
          return false;
       }
 
-      if (destination.Y < 0 || destination.Y > Board.GetLength(1))
+      if (destination.Y < 0 || destination.Y > Cells.GetLength(1))
       {
          // Not inside the board
          return false;
