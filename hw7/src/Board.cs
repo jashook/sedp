@@ -72,10 +72,10 @@ class Board
       point.Y = destination.Y;
    }
 
-   public void UpdateBoard(Move move)
-   {
-      MovePiece((Piece)move.OriginalLocation, move.DestinationLocation);
-   }
+   //public void UpdateBoard(Move move)
+   //{
+   //  MovePiece((Piece)move.OriginalLocation, move.DestinationLocation);
+   //}
 
    private bool IsValidMove(Piece point, Cell destination)
    {
