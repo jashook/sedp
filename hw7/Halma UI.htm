@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0057)http://lyle.smu.edu/~coyle/halmagame/canvas-halma1.1.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="UTF-8">
+        <meta name="robots" content="noindex">
+        <title>Halma UI</title>
+        <script src="./ui_files/jquery-2.1.1.js"></script>
+        <script src="./ui_files/halma.js"></script>
+    </head>
+    <body>
+        <div id="initialization">
+            <h1>Halma UI version 1.1</h1>
+            <form id="initForm">
+                <!-- Uncomment this to use initialization form -->
+                <!-- <label>Board Size:</label>
+                <input type="number" id="boardSize" min="9" max="36" required /><br /><br />
+
+                <label>Destination Corner:</label><br />
+                <input type="radio" id="upperLeftDest" value="upperLeft" name="destCorner" required />Upper-Left<br />
+                <input type="radio" id="lowerLeftDest" value="lowerLeft" name="destCorner" required />Lower-Left<br />
+                <input type="radio" id="upperRightDest" value="upperRight" name="destCorner" required />Upper-Right<br />
+                <input type="radio" id="lowerRightDest" value="lowerRight" name="destCorner" required />Lower-Right<br />
+                <br />
+                <label>Pieces Starting Corner:</label><br />
+                <input type="radio" id="upperLeftPiece" value="upperLeft" name="pieceCorner" required />Upper-Left<br />
+                <input type="radio" id="lowerLeftPiece" value="lowerLeft" name="pieceCorner" required />Lower-Left<br />
+                <input type="radio" id="upperRightPiece" value="upperRight" name="pieceCorner" required/>Upper-Right<br />
+                <input type="radio" id="lowerRightPiece" value="lowerRight" name="pieceCorner" required/>Lower-Right<br />
+
+                <br /> -->
+                <label>URL of your AI:</label>
+                <input style="width: 400px" type="text" id="url" value="" required="">
+                <input type="button" id="startGame" value="Play!" onclick="checkInputs()">
+                <br>
+                <p style="color: red">*Your AI must be on the same server as this UI<br>
+                    Begin your URL with http:// <br>
+                    JSON with boardSize, pieces and destinations will be sent via HTTP POST<br>
+                    For details about the outgoing and incoming JSON formats see 
+                    <a href="http://lyle.smu.edu/~coyle/halmagame/readme.pdf">http://lyle.smu.edu/~coyle/halmagame/readme.pdf</a>  <br>
+                    
+                </p>
+                <p style="color: blue">The JSON from the HalmaUI is sent via HTTP POST. 
+                    To obtain the JSON string with PHP use: $jsonStr = file_get_contents("php://input");</p>
+                
+                
+                <input type="submit" id="hiddenSubmit" hidden="">
+                <br>
+                
+            </form>
+        </div>
+        <div id="game" style="display: none;">
+            <h1>Halma UI v1.1</h1>
+            
+            <p><label>HalmaAI JSON Response Displays Here: </label>
+            <label id="responseString" style="width:400"> -- json shown here --</label>
+            </p>
+            <p id="moves">Moves: <span id="movecount">0</span>
+                <input type="button" id="makeMove" value="Make Move" onclick="makeMove()">
+                
+            </p>
+        </div>
+        
+    
+
+</body></html>

@@ -42,12 +42,12 @@ class AIProgram
    {
       string move_as_json;
 
-      /*if (parameters.TryGetValue("move", out move_as_json) == false)
+      if (parameters.TryGetValue("move", out move_as_json) == false)
       {
          // Incorrect parameters
          
          return "";
-      }*/
+      }
 
       //Move move = JSON<Move>.Parse(move_as_json);
 
@@ -61,19 +61,24 @@ class AIProgram
 
    static void Main(string[] args)
    {
-      int count = 0;
+      //int count = 0;
 
-      for (int x = 0; x < 3; ++x)
-      {
-         for (int y = 6; y < 9; ++y)
-         {
-            s_pieces[count++] = new Piece(x, y, 0);
-         }
-      }
+      //for (int x = 0; x < 3; ++x)
+      //{
+      //   for (int y = 6; y < 9; ++y)
+      //   {
+      //      s_pieces[count++] = new Piece(x, y, 0);
+      //   }
+      //}
 
-      test();
+      //test();
 
-      //new ev9.HttpEndPoint("/", on_get_request, on_post_request);
+      ServiceCollection collection =
+         new ServiceCollection(new ServiceFile("/", @"C:\Users\Shook\Source\Repos\sedp\hw7\Halma UI.htm"),
+                               new ServiceFolder(@"C:\Users\Shook\Source\Repos\sedp\hw7\ui_files")
+                               );
+
+      new ev9.HttpEndPoint(collection, on_get_request, on_post_request);
    }
 
    public static void test()
