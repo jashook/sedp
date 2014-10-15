@@ -19,91 +19,90 @@ using System.IO;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace ev9 {
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-class ServiceFolder : ServiceItem
+namespace ev9 
 {
-
-   // Member Variables
-   private string m_name;
-   private string m_folder_path;
-
-   private ServiceFile[] m_files;
-
-   private Permission m_permission;
-
-   // Constructors
-   public ServiceFolder(string path, Permission permission)
+   class ServiceFolder : ServiceItem
    {
-      Ctor(path);
 
-      m_permission = permission;
-   }
+      // Member Variables
+      private string m_folder_path;
 
-   public ServiceFolder(string path)
-   {
-      Ctor(path);
-   }
+      private ServiceFile[] m_files;
 
-   public string GetName()
-   {
-      return m_name;
-   }
+      private Permission m_permission;
 
-   public string GetFolderPath()
-   {
-      return m_folder_path;
-   }
-
-   public Permission GetPermission()
-   {
-      return m_permission;
-   }
-
-   public void SetPermission(Permission permission)
-   {
-      m_permission = permission;
-   }
-
-   public override ServiceFile[] GetItems()
-   {
-      return m_files;
-   }
-
-   private void Ctor(string path)
-   {
-      m_folder_path = path;
-
-      string[] filenames = Directory.GetFiles(m_folder_path, "*.*", SearchOption.AllDirectories);
-
-      m_files = new ServiceFile[filenames.Length];
-
-      int count = 0;
-
-      foreach (string filename in filenames)
+      // Constructors
+      public ServiceFolder(string path, Permission permission)
       {
-         string file_path = Path.GetDirectoryName(filename);
+         Ctor(path);
 
-         int i;
+         m_permission = permission;
+      }
 
-         for (i = file_path.Length - 1; i > 0; --i)
+      public ServiceFolder(string path)
+      {
+         Ctor(path);
+      }
+         
+      public string GetFolderPath()
+      {
+         return m_folder_path;
+      }
+
+      public Permission GetPermission()
+      {
+         return m_permission;
+      }
+
+      public void SetPermission(Permission permission)
+      {
+         m_permission = permission;
+      }
+
+      public override ServiceFile[] GetItems()
+      {
+         return m_files;
+      }
+
+      private void Ctor(string path)
+      {
+         m_folder_path = path;
+
+         string[] filenames = Directory.GetFiles(m_folder_path, "*.*", SearchOption.AllDirectories);
+
+         int count = 0;
+
+         List<ServiceFile> files = new List<ServiceFile> ();
+
+         foreach (string filename in filenames)
          {
-            if (file_path[i] == '\\') break;
+            string file_path = Path.GetDirectoryName(filename);
+
+            file_path = Path.GetFileName (file_path);
+
+            string index_path = Path.GetFileName (filename);
+
+            // ignore all hidden files
+            if (index_path [0] == '.') 
+            {
+               continue;
+            }
+
+            index_path = "/" + file_path + "/" + index_path;
+
+            files.Add(new ServiceFile(index_path, filename, m_permission));
          }
 
-         string index_path = "/" + file_path.Substring(i + 1) + "/" + Path.GetFileName(filename);
+         m_files = new ServiceFile[files.Count];
 
-         m_files[count++] = new ServiceFile(index_path, filename, m_permission);
+         foreach (ServiceFile file in files) 
+         {
+            m_files [count++] = file;
+         }
+
       }
-   }
 
-} // end of class(ServiceFolder)
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+   } // end of class(ServiceFolder)
 
 } // end of namespace(ev9)
 

@@ -74,9 +74,9 @@ class AIProgram
       //test();
 
       ServiceCollection collection =
-         new ServiceCollection(new ServiceFile("/", @"C:\Users\Shook\Source\Repos\sedp\hw7\Halma UI.htm"),
-                               new ServiceFolder(@"C:\Users\Shook\Source\Repos\sedp\hw7\ui_files")
-                               );
+            new ServiceCollection(new ServiceFile("/", @"/Users/jarret/Projects/hw11/hw11/Halma UI.htm"),
+                                  new ServiceFolder(@"/Users/jarret/Projects/hw11/hw11/ui_files")
+                                 );
 
       new ev9.HttpEndPoint(collection, on_get_request, on_post_request);
    }
