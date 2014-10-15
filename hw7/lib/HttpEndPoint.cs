@@ -149,6 +149,7 @@ class HttpEndPoint
       {
          Socket accepting_socket = listening_socket.Accept();
 
+         
          byte[] pre_run_information_buffer = new byte[256];
 
          int pre_run_amount_read = 0;
@@ -172,7 +173,12 @@ class HttpEndPoint
 
          parameters.Add("raw_output", raw_output);
 
-         string service_file = ServiceFile(url);
+         string service_file = "";
+
+         if (method == 0)
+         {
+            service_file = ServiceFile(url);
+         }
 
          string html = "";
 
@@ -240,7 +246,7 @@ class HttpEndPoint
 
       transfered_information = transfered_information.Substring(1);
 
-      if (transfered_information.Length > 0) return method;
+      if (transfered_information.Length == 0) return method;
 
       if (raw == 1)
       {

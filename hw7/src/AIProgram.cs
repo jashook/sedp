@@ -42,7 +42,7 @@ class AIProgram
    {
       string move_as_json;
 
-      if (parameters.TryGetValue("move", out move_as_json) == false)
+      if (parameters.TryGetValue("default", out move_as_json) == false)
       {
          // Incorrect parameters
          
@@ -74,8 +74,8 @@ class AIProgram
       //test();
 
       ServiceCollection collection =
-         new ServiceCollection(new ServiceFile("/", @"C:\Users\Shook\Source\Repos\sedp\hw7\Halma UI.htm"),
-                               new ServiceFolder(@"C:\Users\Shook\Source\Repos\sedp\hw7\ui_files")
+         new ServiceCollection(new ServiceFile("/", @"C:\Users\Shook\Documents\Visual Studio 2013\Projects\hw7\hw7\Halma UI.htm"),
+                               new ServiceFolder(@"C:\Users\Shook\Documents\Visual Studio 2013\Projects\hw7\hw7\ui_files")
                                );
 
       new ev9.HttpEndPoint(collection, on_get_request, on_post_request);
