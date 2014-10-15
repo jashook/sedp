@@ -240,8 +240,8 @@ namespace ev9 {
          int raw = raw_char - '0';
 
          transfered_information = transfered_information.Substring(1);
-
-         if (transfered_information.Length > 0) return method;
+ 
+         if (transfered_information.Length == 0) return method;
 
          if (raw == 1)
          {
