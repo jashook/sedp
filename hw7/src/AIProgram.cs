@@ -108,9 +108,10 @@ namespace A1
       //////////////////////////////////////////////////////////////////////////
       static void Main(string[] args)
       {
-         if (args.Length != 2)
+         if (args.Length != 3)
          {
             Console.Write("Unexpected arguments provided, usage <exe> ");
+            Console.Write("<path to listen on> ");
             Console.Write("<path of html file> ");
             Console.WriteLine("<path of resource folder>");
 
