@@ -1,0 +1,18 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="hw7/src/AI.cs">
+    <Files>
+      <File FileName="hw7/src/AIProgram.cs" Line="27" Column="27" />
+      <File FileName="hw7/src/AI.cs" Line="28" Column="28" />
+      <File FileName="hw7/src/Board.cs" Line="13" Column="13" />
+      <File FileName="hw7/src/Cell.cs" Line="13" Column="13" />
+      <File FileName="hw7/src/InputJson.cs" Line="13" Column="13" />
+      <File FileName="hw7/src/Move.cs" Line="13" Column="13" />
+      <File FileName="hw7/src/Piece.cs" Line="13" Column="13" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

@@ -1,9 +1,15 @@
 ﻿////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-// 
+//
+// Author: Jarret Shook
+//
+// URL: ev9.cloudapp.net
+//
 // Module: AIProgram.cs
 //
-// 30-Oct-14: Version 1.0: Created
+// 30-Sep-14: Version 1.0: Created
+// 15-Oct-14: Version 1.1: Changed to accept the entire board as JSON
+// 20-Oct-14: Version 1.1: Refactored
 //
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -21,93 +27,110 @@ using JS;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace hw8 {
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-class AIProgram
+namespace A1
 {
-   private static Board s_board = new Board();
-   private static Piece[] s_pieces = new Piece[9];
-
-   public static string on_get_request(Dictionary<string, string> parameters)
+   public class AIProgram
    {
-      // Get request should not happen
-
-      return "";
-   }
-
-   public static string on_post_request(Dictionary<string, string> parameters)
-   {
-      string move_as_json;
-
-      if (parameters.TryGetValue("default", out move_as_json) == false)
+      //////////////////////////////////////////////////////////////////////////
+      // Function: on_get_request
+      //
+      // Parameters:
+      //
+      // Dictionary<string, string> parameters: all of the get parameters
+      //                                        passed to the function
+      //
+      // Return:
+      //
+      // string: the string to be serviced in the HTTP Response
+      //////////////////////////////////////////////////////////////////////////
+      public static string on_get_request(Dictionary<string, string> parameters)
       {
-         // Incorrect parameters
-         
+         // Use the default service to handle get requests
+
          return "";
       }
 
-      //Move move = JSON<Move>.Parse(move_as_json);
-
-      //s_board.UpdateBoard(move);
-
-      Move move = AI.NextMove(s_board, s_pieces);
-
-      return JSON<Move>.ToJSONString(move);
-
-   }
-
-   static void Main(string[] args)
-   {
-      //int count = 0;
-
-      //for (int x = 0; x < 3; ++x)
-      //{
-      //   for (int y = 6; y < 9; ++y)
-      //   {
-      //      s_pieces[count++] = new Piece(x, y, 0);
-      //   }
-      //}
-
-      //test();
-
-      ServiceCollection collection =
-<<<<<<< HEAD
-            new ServiceCollection(new ServiceFile("/", @"/Users/jarret/Projects/hw11/hw11/Halma UI.htm"),
-                                  new ServiceFolder(@"/Users/jarret/Projects/hw11/hw11/ui_files")
-                                 );
-=======
-         new ServiceCollection(new ServiceFile("/", @"C:\Users\Shook\Documents\Visual Studio 2013\Projects\hw7\hw7\Halma UI.htm"),
-                               new ServiceFolder(@"C:\Users\Shook\Documents\Visual Studio 2013\Projects\hw7\hw7\ui_files")
-                               );
->>>>>>> f981b5a4db822a639866df064f3d0eea4e2a30cb
-
-      new ev9.HttpEndPoint(collection, on_get_request, on_post_request);
-   }
-
-   public static void test()
-   {
-      Move move;
-
-      Dictionary<string, string> parameters = null;
-
-      do
+      //////////////////////////////////////////////////////////////////////////
+      // Function: on_post_request
+      //
+      // Parameters:
+      //
+      // Dictionary<string, string> parameters: all of the post parameters
+      //                                        passed to the function
+      //
+      // Return:
+      //
+      // string: the string to be serviced in the HTTP Response
+      //
+      // Note:
+      //
+      // Unnamed key value pairs for post are inserted as "default"
+      // all post information transfered in a way that is not url-x-encoded
+      // is stored in they key "raw_data"
+      //////////////////////////////////////////////////////////////////////////
+      public static string on_post_request(Dictionary<string, string> parameters)
       {
-         move = JSON<Move>.Parse(on_post_request(parameters));
+         string json_input;
 
-         Console.WriteLine(move.OriginalLocation);
+         // JSON is beingsent without a key
+         // therefore it will be stored with the key "default"
+         if (parameters.TryGetValue("default", out json_input) == false)
+         {
+            // Incorrect parameters
+            
+            return "";
+         }
 
-      } while (move != null);
-   }
+         InputJson input = JSON<InputJson>.Parse(json_input);
 
-} // end of class(Program)
+         Piece[] pieces = input.pieces;
+         Piece[] destinations = input.destinations;
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+         Board board = new Board(input.boardSize, pieces, destinations);
+         AI ai = new AI(board);
 
-} // end of namespace(ev9)
+         Move move = ai.GetNextMove(pieces);
+
+         return JSON<Move>.ToJSONString(move);
+
+      }
+
+      //////////////////////////////////////////////////////////////////////////
+      // Function: Main
+      //
+      // Parameters:
+      //
+      // string[] args: command line arguments
+      //
+      // Return:
+      //
+      // void
+      //////////////////////////////////////////////////////////////////////////
+      static void Main(string[] args)
+      {
+         if (args.Length != 2)
+         {
+            Console.Write("Unexpected arguments provided, usage <exe> ");
+            Console.Write("<path of html file> ");
+            Console.WriteLine("<path of resource folder>");
+
+            return;
+         }
+
+         ServiceFile html_file = new ServiceFile("/", args[0]);
+         ServiceFolder resource_folder = new ServiceFolder(args[1]);
+
+         // Service the html file "/", and the folder on any get request
+         // Only servicing these two locations guarentees security
+         var collection = new ServiceCollection(html_file, resource_folder);
+
+         // Start the server, listening at "/"
+         new ev9.HttpEndPoint(collection, on_get_request, on_post_request);
+      }
+
+   } // end of class(AIProgram)
+      
+} // end of namespace(A1)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////

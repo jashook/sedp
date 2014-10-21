@@ -1,6 +1,10 @@
 ﻿////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-// 
+//
+// Author: Jarret Shook
+//
+// URL: ev9.cloudapp.net
+//
 // Module: Move.cs
 //
 // 7-Oct-14: Version 1.0: Created
@@ -14,50 +18,36 @@ using System.Collections.Generic;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace hw8 {
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-class Move
+namespace A1
 {
-   // Member Variables
-
-   public Cell OriginalLocation { get; set; }
-   public Cell[] DestinationLocations { get; set; }
-
-   public Move()
+   public class Move
    {
-      OriginalLocation = new Cell();
-      DestinationLocations = new Cell[1] { OriginalLocation };
-   }
+      // Member Variables
 
-   public Move(Cell old_location, Cell new_location)
-   {
-      OriginalLocation = old_location;
-      DestinationLocations = new Cell[1] { new_location };
-   }
+      public Cell from { get; set; }
+      public Cell[] to { get; set; }
 
-   public Move(Cell old_location, params Cell[] new_locations)
-   {
-      OriginalLocation = old_location;
-      DestinationLocations = new Cell[new_locations.Length];
-
-      int count = 0;
-
-      foreach (Cell cell in new_locations)
+      public Move()
       {
-         DestinationLocations[count] = new_locations[count];
-
-         ++count;
+         from = new Cell();
+         to = new Cell[1] { from };
       }
-   }
 
-} // end of class(Move)
+      public Move(Cell old_location, Cell[] new_locations)
+      {
+         from = old_location;
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+         int count = 0;
+         to = new Cell[new_locations.Length];
 
+         foreach (Cell cell in new_locations)
+         {
+            to[count++] = new Cell(cell.x, cell.y);
+         }
+      }
+
+   } // end of class(Move)
+      
 } // end of namespace(hw8)
 
 ////////////////////////////////////////////////////////////////////////////////
