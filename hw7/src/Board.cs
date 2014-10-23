@@ -1,9 +1,14 @@
 ﻿////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-// 
+//
+// Author: Jarret Shook
+//
+// URL: ev9.cloudapp.net
+//
 // Module: Board.cs
 //
-// 7-Oct-14: Version 1.0: Created
+// 07-Oct-14: Version 1.0: Created
+// 20-Oct-14: Version 1.0: Refactored
 //
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -14,105 +19,166 @@ using System.Collections.Generic;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace hw8 {
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-class Board
+namespace A1 
 {
-   // Member Variables
-
-   public Cell[,] Cells { get; private set; }
-   public Cell DestinationUpperLeft { get; private set; }
-   public Cell DestinationLowerRight { get; private set; }
-
-   public Board(int size = 9, Cell upper_left_destination = null, Cell lower_right_destination = null)
+   public class Board
    {
-      Cells = new Cell[size, size];
+      // Member Variables
 
-      if (upper_left_destination == null)
+      public Cell[,] Cells { get; private set; }
+      public Cell[] Destinations { get; set; }
+      public Cell LowerLeftDestination { get; set; }
+
+      public int Size { get; set; }
+
+      // Constructor
+
+      public Board(int size, Piece[] pieces, Piece[] destinations)
       {
-         // Default destination is first row, last column
-         upper_left_destination = new Cell(0, 6);
+         Cells = new Cell[size, size];
+         Size = size;
+         Destinations = new Cell[destinations.Length];
 
-         lower_right_destination = new Cell(2, 8);
-      }
+         int index = 0;
 
-      // Set up the board as a collection of cells
-      // Assign each cell its own number
-      for (int x = 0; x < size; ++x)
-      {
-         for (int y = 0; y < size; ++y)
+         foreach (Piece piece in destinations)
          {
-            Cells[x, y] = new Cell(x, y);
+            Destinations[index++] = new Cell(piece.x, piece.y);
+
+            if (LowerLeftDestination == null)
+            {
+               LowerLeftDestination = Destinations[index - 1];
+            }
+
+            else if (Destinations[index - 1].x <= LowerLeftDestination.x && Destinations[index - 1].y >= LowerLeftDestination.y)
+            {
+               LowerLeftDestination = Destinations[index - 1];
+            }
+         }
+
+         // Set up the board as a collection of cells
+         // Assign each cell its own number
+         for (int x = 0; x < size; ++x)
+         {
+            for (int y = 0; y < size; ++y)
+            {
+               Cells[x, y] = new Cell(x, y);
+            }
+         }
+
+         foreach (Piece piece in pieces)
+         {
+            AddPiece(piece);
          }
       }
 
-      DestinationUpperLeft = upper_left_destination;
-      DestinationLowerRight = lower_right_destination;
-   }
+      // Public member Functions
 
-   public void AddPiece(Piece point)
-   {
-      Cells[point.X, point.Y] = point;
-   }
-
-   public void MovePiece(Piece point, Cell destination)
-   {
-      if (IsValidMove(point, destination) == false) return;      
-
-      // Reset the cell (Removing the point)
-      Cells[point.X, point.Y] = new Cell(point.X, point.Y);
-
-      Cells[destination.X, destination.Y] = point;
-
-      // Update the point
-      point.X = destination.X;
-      point.Y = destination.Y;
-   }
-
-   //public void UpdateBoard(Move move)
-   //{
-   //  MovePiece((Piece)move.OriginalLocation, move.DestinationLocation);
-   //}
-
-   private bool IsValidMove(Piece point, Cell destination)
-   {
-      if (destination.X != point.X && destination.X + 1 != point.X)
+      //////////////////////////////////////////////////////////////////////////
+      // Function: AddPiece
+      //
+      // Parameters:
+      //
+      // Piece point: piece to add to the board
+      //
+      // Return:
+      //
+      // void
+      //////////////////////////////////////////////////////////////////////////
+      public void AddPiece(Piece point)
       {
-         // Not a valid move, return without moving
-         return false;
-      }
-   
-      if (destination.Y != point.Y && destination.Y + 1 != point.Y)
-      {
-         // Not a valid move, return without moving
-         return false;
+         Cells[point.x, point.y] = point;
       }
 
-      if (destination.X < 0 || destination.Y > Cells.GetLength(0))
+      //////////////////////////////////////////////////////////////////////////
+      // Function: IsDestination
+      //
+      // Parameters:
+      //
+      // Piece piece: piece to check against destinations
+      //
+      // Return:
+      //
+      // bool: true if is a destination, false if not
+      //////////////////////////////////////////////////////////////////////////
+      public bool IsDestination(Piece piece)
       {
-         // Not inside the board
+         foreach (Cell cell in Destinations)
+         {
+            if (piece.x == cell.x && piece.y == cell.y)
+            {
+               return true;
+            }
+         }
+
          return false;
       }
 
-      if (destination.Y < 0 || destination.Y > Cells.GetLength(1))
+      //////////////////////////////////////////////////////////////////////////
+      // Function: IsEmptyLocation
+      //
+      // Parameters:
+      //
+      // Piece piece: piece to check
+      //
+      // Return:
+      //
+      // bool: true if there is no piece in this cell, false if occupied
+      //
+      // Note:
+      //
+      // Occupied is an overloaded function in both cell and piece.
+      // If the cell is a piece, it will return true, else it is false.
+      //////////////////////////////////////////////////////////////////////////
+      public bool IsEmptyLocation(Piece piece)
       {
-         // Not inside the board
-         return false;
+         return !Cells[piece.x, piece.y].Occupied();
       }
 
-      return true;
+      //////////////////////////////////////////////////////////////////////////
+      // Function: IsPreferredLocation
+      //
+      // Parameters:
+      //
+      // Piece piece: piece to check
+      //
+      // Return:
+      //
+      // bool: true if the piece is not past the destination, false otherwise
+      //////////////////////////////////////////////////////////////////////////
+      public bool IsPreferredLocation(Piece piece)
+      {
+         // Make sure pieces do not go past the destinations
+         if (IsValidLocation(piece))
+         {
+            return IsDestination(piece) || (piece.x <= LowerLeftDestination.x && piece.y >= LowerLeftDestination.y);
+         }
 
-   }
+         else
+         {
+            return false;
+         }
+      }
 
-} // end of class(Cell)
+      //////////////////////////////////////////////////////////////////////////
+      // Function: IsValidLocation
+      //
+      // Parameters:
+      //
+      // Piece piece: piece to check
+      //
+      // Return:
+      //
+      // bool: true if the cell is inside the board, false otherwise
+      //////////////////////////////////////////////////////////////////////////
+      public bool IsValidLocation(Piece piece)
+      {
+         return (piece.x >= 0 && piece.x <= Size && piece.y <= Size && piece.y >= 0);
+      }
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+   } // end of class(Board)
 
-} // end of namespace(hw8)
+} // end of namespace(A1)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////

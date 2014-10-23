@@ -3,8 +3,9 @@
 // 
 // Module: HttpEndPoint.cs
 //
-// 30-Oct-14: Version 1.0: Created
-// 30-Oct-14: Version 1.0: Support for creating an HttpEndpoint
+// 30-Sep-14: Version 1.0: Created
+// 30-Sep-14: Version 1.0: Support for creating an HttpEndpoint
+// 20-Oct-14: Version 1.0: Refactored and added more notes
 //
 // Notes:
 //
@@ -26,11 +27,8 @@ using System.IO;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace ev9 {
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
+namespace ev9 
+{
 class HttpEndPoint
 {
    public delegate string OnRequest(Dictionary<string, string> parameters);
@@ -41,76 +39,57 @@ class HttpEndPoint
 
    private ServiceFile[] m_files;
 
+      private const int PORT_NUMBER = 8080;
+      private const int START_PORT_NUMBER = 6780;
+      private const int MAX_PORT_NUMBER = 49151;
+
    public HttpEndPoint(string url, ServiceCollection files, OnRequest get_request, OnRequest post_request)
    {
-      m_url = url;
-      m_files = files.GetItems();
-
-      m_get_request_function = get_request;
-      m_post_request_function = post_request;
-
-      Thread t = new Thread(new ThreadStart(Connect));
-
-      t.Start();
-      t.Join();
+         Ctor(url, files, get_request, post_request);
    }
 
    public HttpEndPoint(ServiceCollection files, OnRequest get_request, OnRequest post_request)
    {
-      m_get_request_function = get_request;
-      m_post_request_function = post_request;
-
-      m_url = null;
-      m_files = files.GetItems();
-
-      Thread t = new Thread(new ThreadStart(Connect));
-
-      t.Start();
-      t.Join();
+         Ctor(null, files, get_request, post_request);
    }
 
    public HttpEndPoint(string url, OnRequest get_request, OnRequest post_request)
    {
-      m_get_request_function = get_request;
-      m_post_request_function = post_request;
-
-      m_url = url;
-      m_files = new ServiceFile[0];
-
-      Thread t = new Thread(new ThreadStart(Connect));
-
-      t.Start();
-      t.Join();
+         Ctor(url, null, get_request, post_request);
    }
 
    public void Connect()
    {
-      Socket connecting_socket = null;
-      IPEndPoint endpoint = new IPEndPoint(IPAddress.Loopback, 8080);
-      connecting_socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+         IPEndPoint endpoint = new IPEndPoint(IPAddress.Loopback, PORT_NUMBER);
 
-      Socket listening_socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+         Socket connecting_socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+         Socket listening_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
       bool failed = false;
       int port = 6780;
 
       IPEndPoint listening_endpoint = new IPEndPoint(IPAddress.Loopback, port);
 
-      try
-      {
          do
          {
+      try
+      {
             listening_socket.Bind(listening_endpoint);
-
-         } while (failed);
       }
 
       catch
       {
          listening_endpoint = new IPEndPoint(IPAddress.Loopback, ++port);
 
+               if (port > MAX_PORT_NUMBER)
+               {
+                  port = START_PORT_NUMBER;
+               }
+
          failed = true;
       }
+         } while (failed);
 
       string message = m_url == null ? null : port.ToString() + ":" + m_url;
 
@@ -173,12 +152,7 @@ class HttpEndPoint
 
          parameters.Add("raw_output", raw_output);
 
-         string service_file = "";
-
-         if (method == 0)
-         {
-            service_file = ServiceFile(url);
-         }
+            string service_file = method == 1 ? "" : ServiceFile(url);
 
          string html = "";
 
@@ -220,6 +194,20 @@ class HttpEndPoint
 
          accepting_socket.Disconnect(false);
       }
+      }
+
+      private void Ctor(string url, ServiceCollection files, OnRequest get_request, OnRequest post_request)
+      {
+         m_url = url;
+         m_files = files.GetItems();
+
+         m_get_request_function = get_request;
+         m_post_request_function = post_request;
+
+         Thread t = new Thread(new ThreadStart(Connect));
+
+         t.Start();
+         t.Join();
    }
 
    private int ParseType(string transfered_information, out Dictionary<string, string> parameters, out string url, ref string raw_ouput)
@@ -266,10 +254,10 @@ class HttpEndPoint
       {
          if (key_value != "")
          {
-            string[] key_values = key_value.Split(new char[1] { '=' });
+         string[] key_values = key_value.Split(new char[1] { '=' });
 
-            parameters.Add(key_values[0], key_values[1]);
-         }
+         parameters.Add(key_values[0], key_values[1]);
+      }
       }
 
       return method;
@@ -342,9 +330,6 @@ class HttpEndPoint
    }
 
 } // end of class(ev9)
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 
 } // end of namespace(ev9)
 
