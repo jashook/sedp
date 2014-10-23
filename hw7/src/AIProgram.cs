@@ -11,6 +11,10 @@
 // 15-Oct-14: Version 1.1: Changed to accept the entire board as JSON
 // 20-Oct-14: Version 1.1: Refactored
 //
+// Notes: 
+//
+// Simple class to start the server
+//
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -117,9 +121,9 @@ namespace A1
 
             return;
          }
-
-         ServiceFile html_file = new ServiceFile("/", args[0]);
-         ServiceFolder resource_folder = new ServiceFolder(args[1]);
+           
+         ServiceFile html_file = new ServiceFile(args[0], args[1]);
+         ServiceFolder resource_folder = new ServiceFolder(args[2]);
 
          // Service the html file "/", and the folder on any get request
          // Only servicing these two locations guarentees security

@@ -151,7 +151,12 @@ namespace A1
          // Make sure pieces do not go past the destinations
          if (IsValidLocation(piece))
          {
-            return IsDestination(piece) || (piece.x <= LowerLeftDestination.x && piece.y >= LowerLeftDestination.y);
+
+            return IsDestination(piece) || 
+                  (piece.x <= 
+                   LowerLeftDestination.x && 
+                   piece.y >= LowerLeftDestination.y
+                  );
          }
 
          else
