@@ -29,171 +29,170 @@ using System.IO;
 
 namespace ev9 
 {
-class HttpEndPoint
-{
-   public delegate string OnRequest(Dictionary<string, string> parameters);
+   class HttpEndPoint
+   {
+      public delegate string OnRequest(Dictionary<string, string> parameters);
 
-   private OnRequest m_get_request_function;
-   private OnRequest m_post_request_function;
-   private string m_url;
+      private OnRequest m_get_request_function;
+      private OnRequest m_post_request_function;
+      private string m_url;
 
-   private ServiceFile[] m_files;
+      private ServiceFile[] m_files;
 
       private const int PORT_NUMBER = 8080;
       private const int START_PORT_NUMBER = 6780;
       private const int MAX_PORT_NUMBER = 49151;
 
-   public HttpEndPoint(string url, ServiceCollection files, OnRequest get_request, OnRequest post_request)
-   {
-         Ctor(url, files, get_request, post_request);
-   }
+      public HttpEndPoint(string url, ServiceCollection files, OnRequest get_request, OnRequest post_request)
+      {
+            Ctor(url, files, get_request, post_request);
+      }
 
-   public HttpEndPoint(ServiceCollection files, OnRequest get_request, OnRequest post_request)
-   {
-         Ctor(null, files, get_request, post_request);
-   }
+      public HttpEndPoint(ServiceCollection files, OnRequest get_request, OnRequest post_request)
+      {
+            Ctor(null, files, get_request, post_request);
+      }
 
-   public HttpEndPoint(string url, OnRequest get_request, OnRequest post_request)
-   {
-         Ctor(url, null, get_request, post_request);
-   }
+      public HttpEndPoint(string url, OnRequest get_request, OnRequest post_request)
+      {
+            Ctor(url, null, get_request, post_request);
+      }
 
-   public void Connect()
-   {
+      public void Connect()
+      {
          IPEndPoint endpoint = new IPEndPoint(IPAddress.Loopback, PORT_NUMBER);
 
          Socket connecting_socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
          Socket listening_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-      bool failed = false;
-      int port = 6780;
+         bool failed = false;
+         int port = 6780;
 
-      IPEndPoint listening_endpoint = new IPEndPoint(IPAddress.Loopback, port);
+         IPEndPoint listening_endpoint = new IPEndPoint(IPAddress.Loopback, port);
 
          do
          {
-      try
-      {
-            listening_socket.Bind(listening_endpoint);
-      }
+            try
+            {
+                  listening_socket.Bind(listening_endpoint);
+            }
 
-      catch
-      {
-         listening_endpoint = new IPEndPoint(IPAddress.Loopback, ++port);
+            catch
+            {
+               listening_endpoint = new IPEndPoint(IPAddress.Loopback, ++port);
 
                if (port > MAX_PORT_NUMBER)
                {
                   port = START_PORT_NUMBER;
                }
 
-         failed = true;
-      }
+               failed = true;
+            }
+
          } while (failed);
 
-      string message = m_url == null ? null : port.ToString() + ":" + m_url;
+         string message = m_url == null ? null : port.ToString() + ":" + m_url;
 
-      foreach (ServiceFile file in m_files)
-      {
-         if (message == null)
+         foreach (ServiceFile file in m_files)
          {
-            message = port.ToString() + ":" + file.GetName();
-         }
-
-         else
-         {
-            message = message + "&" + port.ToString() + ":" + file.GetName();
-         }
-      }
-
-      Byte[] sent_message = Encoding.ASCII.GetBytes(message);
-
-      // Max of 1024 waiting connections
-      listening_socket.Listen(1024);
-
-      try
-      {
-         connecting_socket.Connect(endpoint);
-      }
-
-      catch
-      {
-         Console.WriteLine("Unable to Connect to Server, please check if it is running.");
-      }
-         
-      connecting_socket.Send(sent_message, sent_message.Length, 0);
-      connecting_socket.Disconnect(false);
-
-      while (true)
-      {
-         Socket accepting_socket = listening_socket.Accept();
-
-         
-         byte[] pre_run_information_buffer = new byte[256];
-
-         int pre_run_amount_read = 0;
-
-         string pre_run_information = "";
-
-         do
-         {
-            pre_run_amount_read = accepting_socket.Receive(pre_run_information_buffer, pre_run_information_buffer.Length, 0);
-
-            pre_run_information = pre_run_information + Encoding.ASCII.GetString(pre_run_information_buffer, 0, pre_run_amount_read);
-
-         } while (pre_run_amount_read > 0);
-
-         Dictionary<string, string> parameters;
-         string url;
-
-         string raw_output = "";
-
-         int method = ParseType(pre_run_information, out parameters, out url, ref raw_output);
-
-         parameters.Add("raw_output", raw_output);
-
-            string service_file = method == 1 ? "" : ServiceFile(url);
-
-         string html = "";
-
-         if (service_file != "")
-         {
-            html = service_file;
-         }
-
-         else
-         {
-            html = method == 0 ? m_get_request_function(parameters) : m_post_request_function(parameters);
-         }
-
-         byte[] html_message = Encoding.ASCII.GetBytes(html);
-
-         ServiceFile s_file = null;
-
-         foreach (ServiceFile p_file in m_files)
-         {
-            if (p_file.GetName() == url)
+            if (message == null)
             {
-               s_file = p_file;
+               message = port.ToString() + ":" + file.GetName();
+            }
+
+            else
+            {
+               message = message + "&" + port.ToString() + ":" + file.GetName();
             }
          }
 
-         string extension = Path.GetExtension(s_file.GetFilePath());
+         Byte[] sent_message = Encoding.ASCII.GetBytes(message);
 
-         byte[] extension_message = Encoding.ASCII.GetBytes(extension);
+         // Max of 1024 waiting connections
+         listening_socket.Listen(1024);
 
-         accepting_socket = listening_socket.Accept();
+         try
+         {
+            connecting_socket.Connect(endpoint);
+         }
 
-         accepting_socket.Send(extension_message, extension_message.Length, 0);
+         catch
+         {
+            Console.WriteLine("Unable to Connect to Server, please check if it is running.");
+         }
+         
+         connecting_socket.Send(sent_message, sent_message.Length, 0);
+         connecting_socket.Disconnect(false);
 
-         accepting_socket.Disconnect(false);
+         while (true)
+         {
+            Socket accepting_socket = listening_socket.Accept();
 
-         accepting_socket = listening_socket.Accept();
+            byte[] pre_run_information_buffer = new byte[256];
 
-         accepting_socket.Send(html_message, html_message.Length, 0);
+            int pre_run_amount_read = 0;
+            string pre_run_information = "";
 
-         accepting_socket.Disconnect(false);
-      }
+            do
+            {
+               pre_run_amount_read = accepting_socket.Receive(pre_run_information_buffer, pre_run_information_buffer.Length, 0);
+
+               pre_run_information = pre_run_information + Encoding.ASCII.GetString(pre_run_information_buffer, 0, pre_run_amount_read);
+
+            } while (pre_run_amount_read > 0);
+
+            Dictionary<string, string> parameters;
+            string url;
+
+            string raw_output = "";
+
+            int method = ParseType(pre_run_information, out parameters, out url, ref raw_output);
+
+            parameters.Add("raw_output", raw_output);
+
+            string service_file = method == 1 ? "" : ServiceFile(url);
+
+            string html = "";
+
+            if (service_file != "")
+            {
+               html = service_file;
+            }
+
+            else
+            {
+               html = method == 0 ? m_get_request_function(parameters) : m_post_request_function(parameters);
+            }
+
+            byte[] html_message = Encoding.ASCII.GetBytes(html);
+
+            ServiceFile s_file = null;
+
+            foreach (ServiceFile p_file in m_files)
+            {
+               if (p_file.GetName() == url)
+               {
+                  s_file = p_file;
+               }
+            }
+
+            string extension = Path.GetExtension(s_file.GetFilePath());
+
+            byte[] extension_message = Encoding.ASCII.GetBytes(extension);
+
+            accepting_socket = listening_socket.Accept();
+
+            accepting_socket.Send(extension_message, extension_message.Length, 0);
+
+            accepting_socket.Disconnect(false);
+
+            accepting_socket = listening_socket.Accept();
+
+            accepting_socket.Send(html_message, html_message.Length, 0);
+
+            accepting_socket.Disconnect(false);
+         }
       }
 
       private void Ctor(string url, ServiceCollection files, OnRequest get_request, OnRequest post_request)
@@ -208,128 +207,128 @@ class HttpEndPoint
 
          t.Start();
          t.Join();
-   }
-
-   private int ParseType(string transfered_information, out Dictionary<string, string> parameters, out string url, ref string raw_ouput)
-   {
-      parameters = new Dictionary<string, string>();
-
-      int count;
-
-      for (count = 0; transfered_information[count] != '?' && count < transfered_information.Length; ++count);
-
-      url = transfered_information.Substring(0, count);
-
-      transfered_information = transfered_information.Substring(count + 1);
-
-      char method_char = transfered_information[0];
-
-      int method = method_char - '0';
-
-      transfered_information = transfered_information.Substring(1);
-
-      char raw_char = transfered_information[0];
-
-      int raw = raw_char - '0';
-
-      transfered_information = transfered_information.Substring(1);
-
-      if (transfered_information.Length == 0) return method;
-
-      if (raw == 1)
-      {
-         raw_ouput = transfered_information;
-
-         return method;
       }
 
-      if (transfered_information == "")
+      private int ParseType(string transfered_information, out Dictionary<string, string> parameters, out string url, ref string raw_ouput)
       {
-         return method;
-      }
+         parameters = new Dictionary<string, string>();
 
-      string[] split_information = transfered_information.Split(new char[1] { '&' });
+         int count;
 
-      foreach (string key_value in split_information)
-      {
-         if (key_value != "")
+         for (count = 0; transfered_information[count] != '?' && count < transfered_information.Length; ++count);
+
+         url = transfered_information.Substring(0, count);
+
+         transfered_information = transfered_information.Substring(count + 1);
+
+         char method_char = transfered_information[0];
+
+         int method = method_char - '0';
+
+         transfered_information = transfered_information.Substring(1);
+
+         char raw_char = transfered_information[0];
+
+         int raw = raw_char - '0';
+
+         transfered_information = transfered_information.Substring(1);
+
+         if (transfered_information.Length == 0) return method;
+
+         if (raw == 1)
          {
-         string[] key_values = key_value.Split(new char[1] { '=' });
+            raw_ouput = transfered_information;
 
-         parameters.Add(key_values[0], key_values[1]);
-      }
-      }
-
-      return method;
-   }
-
-   private string ReadFile(ServiceFile file)
-   {
-      return System.IO.File.ReadAllText(file.GetFilePath());
-   }
-
-   private string ServiceFile(string file)
-   {
-      ServiceFile s_file = null;
-      bool found = false;
-
-      foreach (ServiceFile p_file in m_files)
-      {
-         if (p_file.GetName() == file)
-         {
-            found = true;
-
-            s_file = p_file;
-
-            break;
+            return method;
          }
+
+         if (transfered_information == "")
+         {
+            return method;
+         }
+
+         string[] split_information = transfered_information.Split(new char[1] { '&' });
+
+         foreach (string key_value in split_information)
+         {
+            string[] key_values = key_value.Split(new char[1] { '=' });
+
+            if (key_values.Length == 2 && key_values[1] != "")
+            {
+               parameters.Add(key_values[0], key_values[1]);
+            }
+         }
+
+         return method;
       }
 
-      if (found == false) return "";
-
-      string return_file;
-
-      switch (s_file.GetPermission())
+      private string ReadFile(ServiceFile file)
       {
-         case Permission.READ_ONLY_ALL:
-            return_file = ReadFile(s_file);
-
-            break;
-
-         case Permission.READ_ONLY_AUTHORIZED:
-            return_file = "";
-
-            break;
-         case Permission.READ_ONLY_LOCAL:
-            return_file = "";
-
-            break;
-         case Permission.READ_WRITE_ALL:
-            return_file = ReadFile(s_file);
-
-            break;
-         case Permission.READ_WRITE_AUTHORIZED:
-            return_file = "";
-
-            break;
-         case Permission.READ_WRITE_LOCAL:
-            return_file = "";
-
-            break;
-         case Permission.HIDDEN:
-            return_file = "";
-
-            break;
-         default:
-            return_file = "";
-
-            break;
+         return System.IO.File.ReadAllText(file.GetFilePath());
       }
 
-      return return_file;
-   }
+      private string ServiceFile(string file)
+      {
+         ServiceFile s_file = null;
+         bool found = false;
 
-} // end of class(ev9)
+         foreach (ServiceFile p_file in m_files)
+         {
+            if (p_file.GetName() == file)
+            {
+               found = true;
+
+               s_file = p_file;
+
+               break;
+            }
+         }
+
+         if (found == false) return "";
+
+         string return_file;
+
+         switch (s_file.GetPermission())
+         {
+            case Permission.READ_ONLY_ALL:
+               return_file = ReadFile(s_file);
+
+               break;
+
+            case Permission.READ_ONLY_AUTHORIZED:
+               return_file = "";
+
+               break;
+            case Permission.READ_ONLY_LOCAL:
+               return_file = "";
+
+               break;
+            case Permission.READ_WRITE_ALL:
+               return_file = ReadFile(s_file);
+
+               break;
+            case Permission.READ_WRITE_AUTHORIZED:
+               return_file = "";
+
+               break;
+            case Permission.READ_WRITE_LOCAL:
+               return_file = "";
+
+               break;
+            case Permission.HIDDEN:
+               return_file = "";
+
+               break;
+            default:
+               return_file = "";
+
+               break;
+         }
+
+         return return_file;
+      }
+
+   } // end of class(ev9)
 
 } // end of namespace(ev9)
 
