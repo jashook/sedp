@@ -264,9 +264,12 @@ class HttpEndPoint
 
       foreach (string key_value in split_information)
       {
-         string[] key_values = key_value.Split(new char[1] { '=' });
+         if (key_value != "")
+         {
+            string[] key_values = key_value.Split(new char[1] { '=' });
 
-         parameters.Add(key_values[0], key_values[1]);
+            parameters.Add(key_values[0], key_values[1]);
+         }
       }
 
       return method;
