@@ -2,13 +2,23 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="hw7/lib/HttpEndPoint.cs">
     <Files>
-      <File FileName="hw7/lib/HttpEndPoint.cs" Line="1" Column="1" />
+      <File FileName="hw7/lib/HttpEndPoint.cs" Line="10" Column="10" />
+      <File FileName="hw7/src/AIProgram.cs" Line="1" Column="1" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="hw7" expanded="True">
+            <Node name="lib" expanded="True">
+              <Node name="HttpEndPoint.cs" selected="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/Users/jarret/OneDrive/repos/sedp/hw7/lib/HttpEndPoint.cs" line="254" column="33" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>
