@@ -5,9 +5,10 @@
 //
 // URL: ev9.cloudapp.net
 //
-// Module: Piece.cs
+// Module: Destination.cs
 //
-// 7-Oct-14: Version 1.0: Created
+// 07-Oct-14: Version 1.0: Created
+// 20-Oct-14: Version 1.0: Refactored
 //
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -18,20 +19,20 @@ using System.Collections.Generic;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace A1 
+namespace A1
 {
-   public class Piece : Cell
+   public class Destination : Cell
    {
-      public int team { get; set; }
+      int team { get; set; }
 
-      public Piece() : base(0,0)
+      public Destination() : base(0,0)
       {
-
+         
       }
 
-      public Piece(int x, int y, int team) : base(x,y)
+      public Destination(int x, int y, int team) : base(x, y)
       {
-         this.team = team
+         this.Team = team;
       }
 
       //////////////////////////////////////////////////////////////////////////
@@ -46,15 +47,14 @@ namespace A1
       // Anything inside a cell is expected to derive the cell class.
       // Therefore, their occupied function will be true.
       //////////////////////////////////////////////////////////////////////////
-      public override bool Occupied()
+      public virtual bool Occupied()
       {
-         return true;
+         return false;
       }
 
-   } // end of class(Piece)
+   } // end of class(Cell)
 
 } // end of namespace(A1)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-/// 

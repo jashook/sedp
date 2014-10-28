@@ -28,7 +28,8 @@ namespace A1
 
       // Member Variables
       public Board GameBoard { get; set; }
-      public Piece[] Destinations { get; set; }
+      public Destination[] Team0Destinations { get; set; }
+      public Destination[] Team1Destinations { get; set; }
 
       // Constructor
 
@@ -52,17 +53,24 @@ namespace A1
       //////////////////////////////////////////////////////////////////////////
       public Move GetNextMove(Piece[] pieces)
       {
-         Cell[] all_destinations = GameBoard.Destinations;
+         int team = pieces[0].team;
 
-         List<Cell> unoccupied_destinations;
+         Destination[] game_board_destinations;
+
+         if (team == 0) game_board_destinations = GameBoard.Team0Destinations;
+         else game_board_destinations = GameBoard.Team1Destinations;
+
+         Destination[] all_destinations = game_board_destinations;
+
+         List<Destination> unoccupied_destinations;
          Move move;
 
          // Loop while the move is not ideal
          do
          {
-            unoccupied_destinations = new List<Cell>();
+            unoccupied_destinations = new List<Destination>();
 
-            foreach (Cell cell in all_destinations)
+            foreach (Destination cell in all_destinations)
             {
                if (cell.Occupied() == false)
                {
@@ -70,7 +78,7 @@ namespace A1
                }
             }
 
-            Cell best_destination = GetBestDestination(unoccupied_destinations);
+            Destination best_destination = GetBestDestination(unoccupied_destinations);
 
             Piece moving_piece = GetPreferredMovingPiece(pieces, 
                                                          best_destination
@@ -112,7 +120,7 @@ namespace A1
       {
          // Prefer a jump, therefore check for it first
 
-         Piece moving_piece = new Piece(piece.x, piece.y);
+         Piece moving_piece = new Piece(piece.x, piece.y, piece.team);
          List<Piece> possible_jumps = GetJump(pieces, piece);
 
          Move move = null;
@@ -159,22 +167,43 @@ namespace A1
          Piece diagnal_piece = null;
          Piece horizontal_piece = null;
 
+         int team = pieces[0].team;
+
          if (current_piece.y > destation.y)
          {
-            up_piece = new Piece(current_piece.x, current_piece.y - 1);
+            up_piece = new Piece(current_piece.x, current_piece.y - 1, current_piece.team);
          }
 
          if (current_piece.x < destation.x)
          {
-            horizontal_piece = new Piece(current_piece.x + 1, current_piece.y);
+            if (team == 0)
+            {
+               horizontal_piece = new Piece(current_piece.x + 1, current_piece.y, current_piece.team);
+            }
+            else
+            {
+               horizontal_piece = new Piece(current_piece.x - 1, current_piece.y, current_piece.team);
+            }
 
             // If can move in both locations then up_piece will not be null
             if (up_piece!= null)
             {
-               int new_x = current_piece.x + 1;
-               int new_y = current_piece.y - 1;
+               int new_x;
+               int new_y;
 
-               diagnal_piece = new Piece(new_x, new_y);
+               if (team == 0)
+               {
+                  new_x = current_piece.x + 1;
+                  new_y = current_piece.y - 1;
+               }
+
+               else
+               {
+                  new_x = current_piece.x + 1;
+                  new_y = current_piece.y - 1;
+               }
+
+               diagnal_piece = new Piece(new_x, new_y, current_piece.team);
             }
          }
 
@@ -226,19 +255,39 @@ namespace A1
       //
       // Returns the lowest-left destination
       //////////////////////////////////////////////////////////////////////////
-      private Cell GetBestDestination(List<Cell> destinations)
+      private Destination GetBestDestination(List<Destination> destinations)
       {
-         Cell best_destination = destinations[0];
+         Destination best_destination = destinations[0];
 
-         foreach (Cell destination in destinations)
+         int team = best_destination.team;
+
+         if (team == 0)
          {
-            // if the row is smaller and the column is larger
-            // then it is a better destination
-            if (destination.x > best_destination.x && 
-                destination.y < best_destination.y
-               )
+            foreach (Destination destination in destinations)
             {
-               best_destination = destination;
+               // if the row is smaller and the column is larger
+               // then it is a better destination
+               if (destination.x > best_destination.x &&
+                   destination.y < best_destination.y
+                  )
+               {
+                  best_destination = destination;
+               }
+            }
+         }
+
+         else 
+         {
+            foreach (Destination destination in destinations)
+            {
+               // if the row is smaller and the column is larger
+               // then it is a better destination
+               if (destination.x < best_destination.x &&
+                   destination.y < best_destination.y
+                  )
+               {
+                  best_destination = destination;
+               }
             }
          }
 

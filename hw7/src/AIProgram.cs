@@ -85,12 +85,22 @@ namespace A1
             return "";
          }
 
-         InputJsonHalma1 input = JSON<InputJsonHalma1>.Parse(json_input);
+         InputJsonHalma2 input = JSON<InputJsonHalma2>.Parse(json_input);
 
          Piece[] pieces = input.pieces;
-         Piece[] destinations = input.destinations;
+         Destination[] destinations = input.destinations;
 
-         Board board = new Board(input.boardSize, pieces, destinations);
+         Piece[] enemy_pieces = input.enemy;
+         Destination[] enemy_destinations = input.enemydestinations;
+
+         Piece[] all_pieces = new Piece[pieces.Length + enemy_pieces.Length];
+
+         int index = 0;
+
+         foreach (Piece piece in pieces) all_pieces[index++] = piece;
+         foreach (Piece piece in enemy_pieces) all_pieces[index++] = piece;
+
+         Board board = new Board(input.boardSize, all_pieces, destinations, enemy_destinations);
          AI ai = new AI(board);
 
          Move move = ai.GetNextMove(pieces);

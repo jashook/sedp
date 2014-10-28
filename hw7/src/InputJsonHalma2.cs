@@ -29,10 +29,10 @@ namespace A1
       // Member Variables
 
       public Piece[] pieces { get; set; }
-      public Piece[] destinations { get; set; }
+      public Destination[] destinations { get; set; }
       public int boardSize { get; set; }
       public Piece[] enemy { get; set; }
-      public Piece[] enemydestinations { get; set; }
+      public Destination[] enemydestinations { get; set; }
 
       // Constructors
 
@@ -43,7 +43,7 @@ namespace A1
 
       public InputJsonHalma2 (Piece[] pieces, 
                               Piece[] destinations, 
-                              int board_s,
+                              int board_size,
                               Piece[] enemy,
                               Piece[] enemydesinations
                              )

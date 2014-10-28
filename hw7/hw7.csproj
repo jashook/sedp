@@ -50,6 +50,7 @@
     <Compile Include="src\Cell.cs" />
     <Compile Include="lib\HttpEndPoint.cs" />
     <Compile Include="lib\JSON.cs" />
+    <Compile Include="src\Destination.cs" />
     <Compile Include="src\Move.cs" />
     <Compile Include="src\Piece.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
