@@ -4,6 +4,7 @@
 // Author: Jarret Shook
 //
 // URL: ev9.cloudapp.net/hw11
+// Proxy: lyle.smu.edu/~jshook/cgi-bin/proxy.py
 //
 // Module: Piece.cs
 //
