@@ -1,21 +1,13 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="hw7/lib/HttpEndPoint.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="hw7/src/AIProgram.cs">
     <Files>
-      <File FileName="hw7/lib/HttpEndPoint.cs" Line="10" Column="10" />
+      <File FileName="hw7/lib/HttpEndPoint.cs" Line="46" Column="46" />
       <File FileName="hw7/src/AIProgram.cs" Line="1" Column="1" />
+      <File FileName="hw7/src/AI.cs" Line="1" Column="1" />
+      <File FileName="hw7/src/InputJsonHalma1.cs" Line="8" Column="8" />
+      <File FileName="hw7/lib/ServiceFolder.cs" Line="31" Column="31" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="hw7" expanded="True">
-            <Node name="lib" expanded="True">
-              <Node name="HttpEndPoint.cs" selected="True" />
-            </Node>
-          </Node>
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

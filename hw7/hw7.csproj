@@ -21,7 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Commandlineparameters>/ "/Users/jarret/OneDrive/repos/sedp/hw7/Halma UI.htm" /Users/jarret/OneDrive/repos/sedp/hw7/ui_files/</Commandlineparameters>
+    <Commandlineparameters>/ "/Users/jarret/OneDrive/repos/sedp/hw7/Halma UI2.html" "/Users/jarret/OneDrive/repos/sedp/hw7/Halma_UI2_files/"</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -57,7 +57,8 @@
     <Compile Include="lib\ServiceFile.cs" />
     <Compile Include="lib\ServiceFolder.cs" />
     <Compile Include="lib\ServiceItem.cs" />
-    <Compile Include="src\InputJson.cs" />
+    <Compile Include="src\InputJsonHalma1.cs" />
+    <Compile Include="src\InputJsonHalma2.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

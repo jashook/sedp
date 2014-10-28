@@ -85,7 +85,7 @@ namespace A1
             return "";
          }
 
-         InputJson input = JSON<InputJson>.Parse(json_input);
+         InputJsonHalma1 input = JSON<InputJsonHalma1>.Parse(json_input);
 
          Piece[] pieces = input.pieces;
          Piece[] destinations = input.destinations;
