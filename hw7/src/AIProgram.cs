@@ -103,7 +103,7 @@ namespace A1
          Board board = new Board(input.boardSize, all_pieces, destinations, enemy_destinations);
          AI ai = new AI(board);
 
-         Move move = ai.GetNextMove(pieces);
+         Move move = ai.GetNextMove(pieces, all_pieces);
 
          return JSON<Move>.ToJSONString(move);
 

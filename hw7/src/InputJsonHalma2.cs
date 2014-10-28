@@ -42,10 +42,10 @@ namespace A1
       }
 
       public InputJsonHalma2 (Piece[] pieces, 
-                              Piece[] destinations, 
+                              Destination[] destinations, 
                               int board_size,
                               Piece[] enemy,
-                              Piece[] enemydesinations
+                              Destination[] enemydesinations
                              )
       {
          this.pieces = pieces;

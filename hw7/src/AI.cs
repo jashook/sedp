@@ -28,8 +28,7 @@ namespace A1
 
       // Member Variables
       public Board GameBoard { get; set; }
-      public Destination[] Team0Destinations { get; set; }
-      public Destination[] Team1Destinations { get; set; }
+      public Destination[] Destination { get; set; }
 
       // Constructor
 
@@ -51,14 +50,13 @@ namespace A1
       //
       // Move: the move that the AI has chosen
       //////////////////////////////////////////////////////////////////////////
-      public Move GetNextMove(Piece[] pieces)
+      public Move GetNextMove(Piece[] pieces, Piece[] all_pieces)
       {
          int team = pieces[0].team;
 
          Destination[] game_board_destinations;
 
-         if (team == 0) game_board_destinations = GameBoard.Team0Destinations;
-         else game_board_destinations = GameBoard.Team1Destinations;
+         game_board_destinations = GameBoard.Team0Destinations;
 
          Destination[] all_destinations = game_board_destinations;
 
@@ -78,15 +76,20 @@ namespace A1
                }
             }
 
-            Destination best_destination = GetBestDestination(unoccupied_destinations);
+            Destination best_destination;
+            best_destination = GetBestDestination(unoccupied_destinations);
 
             Piece moving_piece = GetPreferredMovingPiece(pieces, 
-                                                         best_destination
+                                                         best_destination,
+                                                         all_pieces
                                                         );
 
             if (moving_piece == null)
             {
-               moving_piece = GetMovingPiece(pieces, best_destination);
+               moving_piece = GetMovingPiece(pieces, 
+                                             best_destination,
+                                             all_pieces
+                                            );
             }
 
             if (moving_piece == null)
@@ -94,7 +97,7 @@ namespace A1
                return null; // game is finished
             }
 
-            move = DoMove(moving_piece, best_destination, pieces);
+            move = DoMove(moving_piece, best_destination, all_pieces);
 
          } while(move == null && unoccupied_destinations.Count > 0);
 
@@ -116,12 +119,12 @@ namespace A1
       //
       // Move: The best possible move of this piece
       //////////////////////////////////////////////////////////////////////////
-      private Move DoMove(Piece piece, Cell destination, Piece[] pieces)
+      private Move DoMove(Piece piece, Destination destination, Piece[] pieces)
       {
          // Prefer a jump, therefore check for it first
 
          Piece moving_piece = new Piece(piece.x, piece.y, piece.team);
-         List<Piece> possible_jumps = GetJump(pieces, piece);
+         List<Piece> possible_jumps = GetJump(pieces, piece, destination);
 
          Move move = null;
 
@@ -171,18 +174,27 @@ namespace A1
 
          if (current_piece.y > destation.y)
          {
-            up_piece = new Piece(current_piece.x, current_piece.y - 1, current_piece.team);
+            up_piece = new Piece(current_piece.x, 
+                                 current_piece.y - 1, 
+                                 current_piece.team
+                                );
          }
 
          if (current_piece.x < destation.x)
          {
             if (team == 0)
             {
-               horizontal_piece = new Piece(current_piece.x + 1, current_piece.y, current_piece.team);
+               horizontal_piece = new Piece(current_piece.x + 1, 
+                                            current_piece.y, 
+                                            current_piece.team
+                                           );
             }
             else
             {
-               horizontal_piece = new Piece(current_piece.x - 1, current_piece.y, current_piece.team);
+               horizontal_piece = new Piece(current_piece.x - 1, 
+                                            current_piece.y, 
+                                            current_piece.team
+                                           );
             }
 
             // If can move in both locations then up_piece will not be null
@@ -261,35 +273,7 @@ namespace A1
 
          int team = best_destination.team;
 
-         if (team == 0)
-         {
-            foreach (Destination destination in destinations)
-            {
-               // if the row is smaller and the column is larger
-               // then it is a better destination
-               if (destination.x > best_destination.x &&
-                   destination.y < best_destination.y
-                  )
-               {
-                  best_destination = destination;
-               }
-            }
-         }
-
-         else 
-         {
-            foreach (Destination destination in destinations)
-            {
-               // if the row is smaller and the column is larger
-               // then it is a better destination
-               if (destination.x < best_destination.x &&
-                   destination.y < best_destination.y
-                  )
-               {
-                  best_destination = destination;
-               }
-            }
-         }
+         best_destination = GameBoard.BestDestination;
 
          return best_destination;
       }
@@ -306,7 +290,10 @@ namespace A1
       //
       // Piece: the piece with the best move
       ////////////////////////////////////////////////////////////////////////// 
-      private Piece GetPreferredMovingPiece(Piece[] pieces, Cell destination)
+      private Piece GetPreferredMovingPiece(Piece[] pieces, 
+                                            Destination destination,
+                                            Piece[] all_pieces
+                                           )
       {
          Piece piece_with_largest_jumps = null;
          List<Piece> largest_possible_jump = null;
@@ -314,7 +301,7 @@ namespace A1
          // Return the piece with the most possible jumps
          foreach (Piece piece in pieces)
          {
-            List<Piece> jumping_piece = GetJump(pieces, piece);
+            List<Piece> jumping_piece = GetJump(all_pieces, piece, destination);
 
             if (jumping_piece != null)
             {
@@ -350,12 +337,15 @@ namespace A1
       //
       // Piece: a piece that can move
       //////////////////////////////////////////////////////////////////////////
-      private Piece GetMovingPiece(Piece[] pieces, Cell destination)
+      private Piece GetMovingPiece(Piece[] pieces, 
+                                   Cell destination,
+                                   Piece[] all_pieces
+                                  )
       {
          // For now return the first piece that can move
          foreach (Piece piece in pieces)
          {
-            if (IsPossibleToMove(pieces, piece, destination))
+            if (IsPossibleToMove(all_pieces, piece, destination))
             {
                return piece;
             }
@@ -376,22 +366,49 @@ namespace A1
       //
       // List<Piece>: All of the jumps done, null if impossibe to jump
       //////////////////////////////////////////////////////////////////////////
-      private List<Piece> GetJump(Piece[] pieces, Piece piece)
+      private List<Piece> GetJump(Piece[] pieces, Piece piece, Destination dest)
       {
-         Piece up_piece = new Piece(piece.x, piece.y - 1);
-         Piece diagnal_piece = new Piece(piece.x + 1, piece.y - 1);
-         Piece horizontal_piece = new Piece(piece.x + 1, piece.y);
+         Piece up_piece = new Piece(piece.x, piece.y - 1, piece.team);
+         Piece diagnal_piece;
+         Piece horizontal_piece;
+
+         if (IsUpperRight(dest))
+         {
+            diagnal_piece = new Piece(piece.x + 1, piece.y - 1, piece.team);
+            horizontal_piece = new Piece(piece.x + 1, piece.y, piece.team);
+         }
+
+         else
+         {
+            diagnal_piece = new Piece(piece.x - 1, piece.y - 1, piece.team);
+            horizontal_piece = new Piece(piece.x - 1, piece.y, piece.team);
+         }
 
          List<Piece> jump_list = new List<Piece>();
 
-         MovePieceDelegate do_diagnal_move = 
-            (current_piece) => { ++current_piece.x; --current_piece.y; };
+         MovePieceDelegate do_diagnal_move;
+         MovePieceDelegate do_up_move;
+         MovePieceDelegate do_horizontal_move;
 
-         MovePieceDelegate do_up_move = 
-            (current_piece) => { --current_piece.y; };
+         do_up_move = (current_piece) => { --current_piece.y; };
 
-         MovePieceDelegate do_horizontal_move = 
-            (current_piece) => { ++current_piece.x; };
+         if (IsUpperRight(dest))
+         {
+            do_diagnal_move = 
+               (current_piece) => { ++current_piece.x; --current_piece.y; };
+               
+
+            do_horizontal_move = (current_piece) => { ++current_piece.x; };
+         }
+
+         else
+         {
+            do_diagnal_move = 
+               (current_piece) => { --current_piece.x; --current_piece.y; };
+
+
+            do_horizontal_move = (current_piece) => { --current_piece.x; };
+         }
 
          bool is_valid_jump = false;
 
@@ -415,7 +432,10 @@ namespace A1
 
             if (IsValidJump(pieces, diagnal_piece, do_diagnal_move))
             {
-               jump_list.Add(new Piece(diagnal_piece.x, diagnal_piece.y));
+               jump_list.Add(new Piece(diagnal_piece.x, 
+                                       diagnal_piece.y, 
+                                       piece.team)
+                            );
 
                is_valid_jump = true;
 
@@ -424,7 +444,7 @@ namespace A1
 
             if (IsValidJump(pieces, up_piece, do_up_move))
             {
-               jump_list.Add(new Piece(up_piece.x, up_piece.y));
+               jump_list.Add(new Piece(up_piece.x, up_piece.y, piece.team));
 
                is_valid_jump = true;
 
@@ -433,7 +453,10 @@ namespace A1
 
             if (IsValidJump(pieces, horizontal_piece, do_horizontal_move))
             {
-               jump_list.Add(new Piece(horizontal_piece.x, horizontal_piece.y));
+               jump_list.Add(new Piece(horizontal_piece.x, 
+                                       horizontal_piece.y, 
+                                       piece.team)
+                            );
 
                is_valid_jump = true;
 
@@ -471,6 +494,11 @@ namespace A1
          {
             return false;
          }
+      }
+
+      private bool IsUpperRight(Destination destination)
+      {
+         return destination.x > 3;
       }
 
       private bool IsValidJump(Piece[] pieces, 

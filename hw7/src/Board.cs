@@ -28,8 +28,9 @@ namespace A1
       public Cell[,] Cells { get; private set; }
       public Destination[] Team0Destinations { get; set; }
       public Destination[] Team1Destinations { get; set; }
-      public Cell LowerLeftDestination { get; set; }
-      public Cell LowerRightDestination { get; set; }
+      public Destination LowerLeftDestination { get; set; }
+      public Destination LowerRightDestination { get; set; }
+      public Destination BestDestination { get; set; }
       public int Size { get; set; }
 
       // Constructor
@@ -43,6 +44,7 @@ namespace A1
          Cells = new Cell[size, size];
          Size = size;
          Team0Destinations = first_team_destinations;
+         Team1Destinations = second_team_destinations;
 
          int index = 0;
 
@@ -54,34 +56,42 @@ namespace A1
             {
                if (LowerRightDestination == null)
                {
-                  LowerRightDestination = Team0Destinations[index - 1];
+                  LowerRightDestination = Team0Destinations[index];
                }
 
-               else if (Team0Destinations[index - 1].x <= LowerLeftDestination.x &&
-                        Team0Destinations[index - 1].y >= LowerLeftDestination.y
+               else if (Team0Destinations[index].x >= LowerRightDestination.x &&
+                        Team0Destinations[index].y >= LowerRightDestination.y
                        )
                {
-                  LowerRightDestination = Team0Destinations[index - 1];
+                  LowerRightDestination = Team0Destinations[index];
                }
+
+               ++index;
             }
+
+            BestDestination = LowerRightDestination;
          }
 
          else
          {
-            foreach (Destination piece in second_team_destinations)
+            foreach (Destination piece in first_team_destinations)
             {
                if (LowerLeftDestination == null)
                {
-                  LowerLeftDestination = Team0Destinations[index - 1];
+                  LowerLeftDestination = Team0Destinations[index];
                }
 
-               else if (Team0Destinations[index - 1].x <= LowerLeftDestination.x && 
-                        Team0Destinations[index - 1].y >= LowerLeftDestination.y
+               else if (Team0Destinations[index].x <= LowerLeftDestination.x && 
+                        Team0Destinations[index].y >= LowerLeftDestination.y
                        )
                {
-                  LowerLeftDestination = Team0Destinations[index - 1];
+                  LowerLeftDestination = Team0Destinations[index];
                }
+
+               ++index;
             }
+
+            BestDestination = LowerLeftDestination;
          }
 
          // Set up the board as a collection of cells
@@ -200,26 +210,25 @@ namespace A1
       //////////////////////////////////////////////////////////////////////////
       public bool IsPreferredLocation(Piece piece)
       {
-         int team = piece.team;
+         bool is_upper_right = Team0Destinations[0].x > 3;
 
          // Make sure pieces do not go past the destinations
          if (IsValidLocation(piece))
          {
-
-            if (team == 0)
+            if (is_upper_right)
             {
                return IsTeam0Destination(piece) ||
-                      (piece.x <= LowerLeftDestination.x &&
-                       piece.y >= LowerLeftDestination.y
-                      );
+                     (piece.x <= BestDestination.x &&
+                      piece.y >= BestDestination.y
+                     );
             }
 
             else
             {
-               return IsTeam1Destination(piece) ||
-                      (piece.x >= LowerRightDestination.x &&
-                       piece.y >= LowerRightDestination.y
-                      );
+               return IsTeam0Destination(piece) ||
+                  (piece.x >= BestDestination.x &&
+                     piece.y >= BestDestination.y
+                  );
             }
          }
 

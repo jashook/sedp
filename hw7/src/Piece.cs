@@ -31,7 +31,7 @@ namespace A1
 
       public Piece(int x, int y, int team) : base(x,y)
       {
-         this.team = team
+         this.team = team;
       }
 
       //////////////////////////////////////////////////////////////////////////

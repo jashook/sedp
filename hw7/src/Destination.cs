@@ -23,7 +23,7 @@ namespace A1
 {
    public class Destination : Cell
    {
-      int team { get; set; }
+      public int team { get; set; }
 
       public Destination() : base(0,0)
       {
@@ -32,7 +32,7 @@ namespace A1
 
       public Destination(int x, int y, int team) : base(x, y)
       {
-         this.Team = team;
+         this.team = team;
       }
 
       //////////////////////////////////////////////////////////////////////////
