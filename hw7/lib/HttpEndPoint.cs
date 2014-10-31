@@ -64,23 +64,27 @@ namespace ev9
 
          Socket connecting_socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-         Socket listening_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+         Socket listening_socket = null;
 
          bool failed = false;
          int port = 6780;
-
-         IPEndPoint listening_endpoint = new IPEndPoint(IPAddress.Loopback, port);
 
          do
          {
             try
             {
-                  listening_socket.Bind(listening_endpoint);
+               listening_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+               IPEndPoint listening_endpoint = new IPEndPoint(IPAddress.Loopback, port);
+
+               listening_socket.Bind(listening_endpoint);
+
+               failed = false;
             }
 
-            catch
+            catch (Exception e)
             {
-               listening_endpoint = new IPEndPoint(IPAddress.Loopback, ++port);
+               ++port;
 
                if (port > MAX_PORT_NUMBER)
                {
